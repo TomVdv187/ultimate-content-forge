@@ -559,4 +559,292 @@
 ### Key Requirements (Simulated Competitor & GEO Data)
 
 * **Suggested Word Count:** ${targetBrief.minWords} words (To ensure comprehensive **Content cluster mapping**)
-* **Minimum Structural Elements:** ${targetBrief.minH2s} major H2
+* **Minimum Structural Elements:** ${targetBrief.minH2s} major H2/H3 sections
+* **Quality Mandate:** Pass **E-E-A-T Compliance** (Focus on specificity and verifiable claims)
+
+### Required Semantic Terms (NLP Entity Focus for LLM-Proof Quality)
+
+These terms are critical for achieving high **Real-time NLP scoring** and defeating generic **AI content generation**.
+
+| Term | Required Count | Status |
+| :--- | :--- | :--- |
+| Generative Engine Optimization (GEO) | 4+ mentions | Critical Density |
+| LLM Entity Scoring | 3+ mentions | High Relevance |
+| Generative Answer Structure | 3+ mentions | Zero-Click Focus |
+| E-E-A-T Compliance | 2+ mentions | Trust Focus |
+| Hallucination Mitigation | 2+ mentions | Authority Focus |
+| Zero-Click Optimization | 1+ mention | Generative Focus |
+| Topical Authority Mapping | 4+ mentions | Strategy Focus |
+| Advanced Semantic Networks | 3+ mentions | Technical Depth |
+| Real-time NLP scoring | 3+ mentions | Feature Context |
+| AI content generation | 5+ mentions | Contextual |
+
+---
+
+### Suggested Outline (Frase/Surfer Structure for Generative Strategy)
+
+1.  **Introduction:** Define the current state of ${keyword} and introduce the definitive guide.
+2.  **Strategic Foundation:** Implementing a robust **Generative Engine Optimization (GEO)** strategy for ${keyword}.
+3.  **Core Principles:** Achieving **LLM Entity Scoring** and **E-E-A-T Compliance** in the ${keyword} niche.
+4.  **Content Structure:** Designing for **Zero-Click Optimization** and perfect **Generative Answer Structure**.
+5.  **Quality Control:** Techniques for **Hallucination Mitigation** and validation of data sources specific to ${keyword}.
+6.  **Advanced Application:** Leveraging **Advanced Semantic Networks** and **Real-time NLP scoring** for ${keyword}.
+7.  **Future-Proofing:** Outperforming generic **AI content generation** using depth and nuance.
+8.  **Case Study Example (H3):** A successful application of GEO to ${keyword} (H3).
+9.  **Implementation Checklist (H3):** Step-by-step framework for execution related to ${keyword} (H3).
+10. **Conclusion:** Summarizing the path to peak rankings for ${keyword}.
+`;
+
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            // 1. Initial text cleaning: Convert Markdown bold and paragraphs
+            let htmlContent = demoBriefText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                            .replace(/\n\n/g, '<br><br>')
+                                            .replace(/\n/g, '<br>');
+
+            // 2. Advanced table rendering logic (Refactored to avoid regex errors)
+            const lines = htmlContent.split('<br>');
+            let processedLines = [];
+            let inTable = false;
+            let tableHtml = '';
+            let headerRemoved = false;
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                if (line.startsWith('|') && line.includes('|---|') && !inTable) {
+                    // Start of table structure (Header row and separator line found)
+                    inTable = true;
+                    // Find the header row (i.e., the line before this separator)
+                    if (i > 0) {
+                        const headerLine = lines[i - 1].trim();
+                        const headers = headerLine.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
+                        tableHtml = `<table><thead><tr>${headers}</tr></thead><tbody>`;
+                        
+                        // Mark lines for removal
+                        lines[i - 1] = ''; 
+                        lines[i] = '';
+                        headerRemoved = true;
+                    }
+
+                } else if (line.startsWith('|') && inTable) {
+                    // Table row
+                    const cells = line.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+                    tableHtml += `<tr>${cells}</tr>`;
+                    lines[i] = '';
+
+                } else if (inTable) {
+                    // End of table block - commit the table HTML
+                    tableHtml += '</tbody></table>';
+                    processedLines.push(tableHtml);
+                    tableHtml = '';
+                    inTable = false;
+                    processedLines.push(line);
+                } else {
+                    processedLines.push(line);
+                }
+            }
+            
+            // If the table ended abruptly without a non-table line, commit it here
+            if (inTable) {
+                tableHtml += '</tbody></table>';
+                processedLines.push(tableHtml);
+            }
+
+            // Reconstruct the HTML, filtering out empty lines from header/separator removal
+            document.getElementById('brief-text').innerHTML = processedLines.filter(line => line.trim()).join('<br>');
+
+            
+            // 3. Finalize
+            targetBrief.isBriefGenerated = true;
+
+            // Re-run scoring logic with new brief targets
+            updateTermListUI();
+            calculateContentScore(document.getElementById('content-editor').innerHTML);
+
+
+            briefButton.disabled = false;
+            briefButton.textContent = "Re-Generate Strategic Brief";
+            draftButton.disabled = false;
+        }
+
+        // --- NEW: Generate a topic-specific, storytelling draft (Step 3) ---
+        function generateCookingDraft(keyword) {
+            // NOTE: This version is technical (Step 3 view)
+            return `
+                <h1>The Alchemist in the Kitchen: Achieving **E-E-A-T Compliance** in ${keyword}</h1>
+                <p>To truly master **${keyword}**, one must approach the kitchen not as a technician, but as a storyteller. This journey requires deep **E-E-A-T Compliance**—verifiable Expertise, demonstrated Experience, Authority through tradition, and Trustworthiness in every recipe. We achieve **Generative Engine Optimization (GEO)** not through mere recipe listing, but by documenting the nuanced "why" behind every step, creating content so rich and authoritative it resists trivial **AI content generation**.</p>
+                <p>The **Real-time NLP scoring** of this article ensures we cover every semantic entity from temperature control to ingredient sourcing, making it the definitive guide for aspiring Masterchefs.</p>
+
+                <h2>1. The Foundation of Experience: **Topical Authority Mapping** of Ingredients</h2>
+                <p>Every great meal begins with ingredients, and true mastery requires **Topical Authority Mapping** of their provenance and chemistry. For example, understanding why the fat content of butter matters in a roux is key. This level of detail elevates the **LLM Entity Scoring** of the content, signaling to generative AI that this is a primary source of knowledge. Our demonstration of deep domain knowledge is the first step in **Hallucination Mitigation**—we prevent generic descriptions by providing specific, expert context.</p>
+
+                <h3>1.1. Mastering the Maillard Reaction and **Advanced Semantic Networks**</h3>
+                <p>Achieving perfect browning and flavor (Maillard reaction) is a core skill in **${keyword}**. By consistently detailing the chemical process, we build **Advanced Semantic Networks** within the article. This dense internal network of related concepts is crucial for high **Real-time NLP scoring**, proving our expertise is comprehensive and interconnected. This structural approach also perfects the **Generative Answer Structure** for specific culinary queries.</p>
+
+                <h2>2. Structuring the Masterpiece: Designing for **Zero-Click Optimization**</h2>
+                <p>A great recipe must be easy to follow, a principle analogous to achieving **Zero-Click Optimization** via a clear **Generative Answer Structure**. We design the method section using ordered lists and concise steps, making it instantly quotable by LLMs. This structural fidelity, monitored by **Real-time NLP scoring**, ensures the information is consumed at the top of the search funnel, delivering maximum visibility before the user even clicks. This careful organization demonstrates **E-E-A-T Compliance** by making the content immediately trustworthy and usable.</p>
+                
+                <h2>3. Quality Control: **Hallucination Mitigation** in Technique</h2>
+                <p>The kitchen demands precision, and the web demands truth. We practice **Hallucination Mitigation** by providing temperature ranges, specific timings, and substitution guides verified by culinary science. The absence of ambiguity, monitored by our **Real-time NLP scoring** metrics, confirms high **E-E-A-T Compliance**. This level of verifiable detail makes the content immune to superficial **AI content generation** and ensures high **LLM Entity Scoring**.</p>
+
+                <h2>4. The Final Flourish: **Generative Engine Optimization (GEO)** and the Chef's Voice</h2>
+                <p>Ultimately, the Chef's voice matters. **Generative Engine Optimization (GEO)** ensures that while the article is technically perfect, it retains a distinct, authoritative voice. By consistently reinforcing unique insights and experience, we make the content LLM-proof. This blending of strategic technology with passionate storytelling creates the definitive guide to **${keyword}**.</p>
+                
+                <p>***(This section contains additional simulated long-form content to guarantee the 2500-word target and hit all remaining density requirements for **Topical Authority Mapping**, **Advanced Semantic Networks**, **AI content generation**, and **Generative Engine Optimization (GEO)**.)***</p>
+                <!-- Simulated content end -->
+            `;
+        }
+
+        // --- NEW: Generate a generic business/tech draft (Step 3) ---
+        function generateGenericDraft(keyword) {
+            // NOTE: This version is technical (Step 3 view)
+            return `
+                <h1>Strategic Excellence: The **Generative Engine Optimization (GEO)** Framework for Mastering "${keyword}"</h1>
+                <p>The definitive guide to **${keyword}** begins with a clear understanding of the evolving search landscape. Achieving true organic success requires moving beyond rudimentary SEO tactics and adopting a **Generative Engine Optimization (GEO)** approach. This comprehensive strategy, built on strict **E-E-A-T Compliance** and deep **Topical Authority Mapping**, ensures your content not only ranks traditionally but dominates AI Overviews and generative search results. We use **LLM Entity Scoring** as our benchmark for quality, guaranteeing superiority over basic **AI content generation**.</p>
+                <p>This **LLM-proof** framework provides the necessary technical depth and strategic guidance for **Zero-Click Optimization** in the modern digital ecosystem.</p>
+
+                <h2>1. **Topical Authority Mapping** and **Advanced Semantic Networks** in the "${keyword}" Sector</h2>
+                <p>Success in **${keyword}** is contingent upon building comprehensive **Topical Authority Mapping**. We structure our content to cover all related conceptual entities, thereby increasing our **LLM Entity Scoring**. By building **Advanced Semantic Networks**—rich internal linking and specific term density—we create a content asset that search algorithms identify as the definitive source, a crucial step for **Hallucination Mitigation**.</p>
+
+                <h2>2. **E-E-A-T Compliance**: The Trust Layer for **Generative Engine Optimization (GEO)**</h2>
+                <p>The trust factor (**E-E-A-T Compliance**) is central to **Generative Engine Optimization (GEO)**. Our strategy dictates verifiable sourcing and explicit demonstration of expertise in **${keyword}**. This transparency is essential for **Hallucination Mitigation** and ensures that LLMs prioritize your content as factual. The integrity of our data structure directly influences our **LLM Entity Scoring** and overall ranking stability.</p>
+
+                <h2>3. Designing for **Zero-Click Optimization** with **Generative Answer Structure**</h2>
+                <p>In the age of generative search, content must be structured for immediate quotation. Our **Generative Answer Structure** is optimized for **Zero-Click Optimization** by formatting core insights into concise, quotable paragraphs and using clear lists, maximizing visibility in AI summaries. This is monitored by our **Real-time NLP scoring** system.</p>
+                <p>This section is crucial for long-term **Generative Engine Optimization (GEO)** success.</p>
+
+                <h2>4. **Hallucination Mitigation** and Data Validation Protocols (H3)</h2>
+                <p>Our commitment to **E-E-A-T Compliance** requires stringent **Hallucination Mitigation**. We use protocols to validate data points critical to **${keyword}**, ensuring the content is immune to factual errors common in generic **AI content generation**. This dedication to truth boosts the page's **LLM Entity Scoring** dramatically. This is part of the **Advanced Semantic Networks** strategy.</p>
+                
+                <h2>5. **Real-time NLP scoring** and the Future of **AI content generation**</h2>
+                <p>We leverage **Real-time NLP scoring** to validate that every section of the article meets the required semantic density. This ensures that while we utilize **AI content generation** for speed, the final draft is human-quality, LLM-proof, and fully compliant with the rigorous demands of **Generative Engine Optimization (GEO)**. The success depends on achieving high **Topical Authority Mapping**.</p>
+                
+                <p>***(This section contains extensive additional simulated long-form content to guarantee the 2500-word target and hit all remaining density requirements for **Topical Authority Mapping**, **Advanced Semantic Networks**, and **Generative Engine Optimization (GEO)**, ensuring optimal **E-E-A-T Compliance** and a perfect **Generative Answer Structure**.)***</p>
+                <!-- Simulated content end -->
+            `;
+        }
+
+
+        async function generateAIDraft() {
+            const keywordInput = document.getElementById('keyword-input');
+            const keyword = keywordInput.value.trim() || "Unbeatable Content Strategy";
+            const draftButton = document.getElementById('draft-button');
+            const editor = document.getElementById('content-editor');
+
+            if (!targetBrief.isBriefGenerated) {
+                 // Use custom modal styling for the error message
+                const errorHtml = `
+                    <div style="padding: 20px; background: #fee2e2; border: 1px solid #f87171; border-radius: 8px;">
+                        <h1 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">Drafting Error</h1>
+                        <p style="color: #b91c1c;">Please complete **Step 1: Generate Brief** first using the keyword **"${keyword}"** before attempting to generate the AI Draft.</p>
+                    </div>
+                `;
+                editor.innerHTML = editor.innerHTML + errorHtml; // Append error message
+                return;
+            }
+
+            draftButton.disabled = true;
+            draftButton.textContent = "AI Drafting Content...";
+            editor.classList.add('opacity-50');
+            
+            // Simulate AI generation time
+            await new Promise(resolve => setTimeout(resolve, 2500)); 
+
+            // --- Determine which draft to generate ---
+            let aiDraft;
+            if (keyword.toLowerCase().includes("cook") || keyword.toLowerCase().includes("recipe") || keyword.toLowerCase().includes("masterchef")) {
+                aiDraft = generateCookingDraft(keyword);
+            } else {
+                aiDraft = generateGenericDraft(keyword);
+            }
+            
+            editor.innerHTML = aiDraft;
+            editor.classList.remove('opacity-50');
+            draftButton.disabled = false;
+            draftButton.textContent = "Drafting Complete";
+
+            // Make Step 4 section visible after the draft is created
+            document.getElementById('final-article-output').innerHTML = '<p class="text-gray-500 text-center">Click the button above to render the clean, storytelling article, free of technical jargon.</p>';
+            
+            // Trigger score calculation and saving for the new content
+            handleContentUpdate(); 
+        }
+        
+        // --- NEW: Function to clean and display the final article (Step 4) ---
+        function generateFinalArticle() {
+            const draftContent = document.getElementById('content-editor').innerHTML;
+            const finalOutputContainer = document.getElementById('final-article-output-container');
+            const keyword = document.getElementById('keyword-input').value.trim() || "Content Mastery";
+            
+            // Re-run scoring to ensure the score is current (should be 98)
+            calculateContentScore(draftContent);
+            
+            // Set the final score visual feedback
+            const finalScore = document.getElementById('content-score-dial').textContent;
+            
+            let finalHtml = `<div id="final-article-output" class="rounded-xl shadow-2xl">`;
+            
+            // --- JARGON REPLACEMENT MAPPING ---
+            let cleanContent = draftContent;
+
+            // This object now maps the technical term (as regex string) to its storytelling replacement
+            const replacements = {
+                'Generative Engine Optimization \\(GEO\\)': 'Strategic Content Dominance',
+                'LLM Entity Scoring': 'Conceptual Depth',
+                'Generative Answer Structure': 'Perfect Content Flow',
+                'E-E-A-T Compliance': 'Verified Expertise and Trust',
+                'Hallucination Mitigation': 'Rigorous Fact-Checking',
+                'Zero-Click Optimization': 'Maximum Visibility',
+                'Topical Authority Mapping': 'Comprehensive Topic Coverage',
+                'Advanced Semantic Networks': 'Deep Conceptual Linking',
+                'Real-time NLP scoring': 'Continuous Quality Assessment',
+                'AI content generation': 'Generic Content Automation',
+            };
+            
+            // Clean up placeholders and technical content blocks first
+            cleanContent = cleanContent.replace(/<p>\*\*\*\(This section contains additional[\s\S]*?<!-- Simulated content end -->/i, '');
+            
+            // Apply replacements using dynamic regex for global, case-insensitive substitution
+            for (const technicalPhrase in replacements) {
+                 const replacement = replacements[technicalPhrase];
+                 const regex = new RegExp(technicalPhrase, 'gi');
+                 cleanContent = cleanContent.replace(regex, replacement);
+            }
+            
+            // Specific heading cleanups (converting technical H2s to narrative H2s)
+            
+            // Cooking specific clean-up (if applicable)
+            cleanContent = cleanContent.replace(/The Alchemist in the Kitchen: Achieving Verified Expertise and Trust in/gi, 'The Alchemist in the Kitchen: Mastering the Art of');
+            cleanContent = cleanContent.replace(/The Foundation of Experience: Comprehensive Topic Coverage of Ingredients/gi, '1. The Foundation of Experience: Sourcing and Chemistry of Ingredients');
+            cleanContent = cleanContent.replace(/Mastering the Maillard Reaction and Deep Conceptual Linking/gi, '1.1. Mastering the Maillard Reaction and Flavor Science');
+            cleanContent = cleanContent.replace(/Structuring the Masterpiece: Designing for Maximum Visibility/gi, '2. Structuring the Masterpiece: Creating the Perfect Recipe Flow');
+            cleanContent = cleanContent.replace(/Quality Control: Rigorous Fact-Checking in Technique/gi, '3. Quality Control: Precision and Verifiable Techniques');
+            cleanContent = cleanContent.replace(/The Final Flourish: Strategic Content Dominance and the Chef\'s Voice/gi, '4. The Final Flourish: Achieving a Distinctive Authorial Voice');
+
+            // Generic article specific clean-up
+            cleanContent = cleanContent.replace(/Strategic Excellence: The Strategic Content Dominance Framework for Mastering/gi, 'Strategic Excellence: The Unbeatable Blueprint for');
+            cleanContent = cleanContent.replace(/Topical Authority Mapping and Deep Conceptual Linking in the/gi, 'Comprehensive Topic Coverage and Deep Conceptual Linking in the');
+            cleanContent = cleanContent.replace(/E-E-A-T Compliance: The Trust Layer for Strategic Content Dominance/gi, 'Verified Expertise and Trust: The Definitive Trust Layer');
+            cleanContent = cleanContent.replace(/Designing for Maximum Visibility with Perfect Content Flow/gi, 'Designing for Maximum Visibility with Perfect Content Flow');
+            cleanContent = cleanContent.replace(/Hallucination Mitigation and Data Validation Protocols/gi, 'Rigorous Fact-Checking and Data Validation Protocols');
+            cleanContent = cleanContent.replace(/Real-time NLP scoring and the Future of Generic Content Automation/gi, 'Continuous Quality Assessment and the Future of Content');
+            
+            
+            finalHtml += cleanContent;
+            
+            finalOutputContainer.innerHTML = finalHtml + '</div>';
+            
+            // Add a status message
+            finalOutputContainer.insertAdjacentHTML('afterbegin', `<div class="p-3 mb-4 bg-orange-700/30 text-orange-400 rounded-lg text-sm font-semibold border border-orange-600">
+                ✅ Final Narrative Rendered. Score: ${finalScore}/100. This content is ready for publication.
+            </div>`);
+        }
+    </script>
+
+    <script>
+        // Start Firebase Initialization
+    </script>
+</body>
+</html>
