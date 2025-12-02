@@ -226,12 +226,25 @@
             <span class="text-indigo-400">&gt;</span> The Ultimate Content Forge <span class="text-indigo-400">| GEO Console</span>
         </h1>
         <p class="text-gray-500 mb-6 font-mono text-xs" id="user-id-display">Initializing user...</p>
+        
+        <!-- View Switcher (Mimicking Login/Role Access) -->
+        <div class="flex justify-between items-center mb-6 dashboard-card p-4 rounded-xl">
+            <h3 class="text-lg font-semibold text-gray-300">Application View Mode:</h3>
+            <div class="flex space-x-2">
+                <button id="user-view-button" onclick="switchView('user')" class="px-4 py-2 text-sm rounded-lg btn-indigo bg-blue-500/70">
+                    User Interface
+                </button>
+                <button id="admin-view-button" onclick="switchView('admin')" class="px-4 py-2 text-sm rounded-lg btn-orange bg-orange-500/70">
+                    Admin Interface
+                </button>
+            </div>
+        </div>
 
         <div class="dashboard-card p-8 rounded-2xl space-y-8">
 
             <!-- Strategy & Action Panel (Step 1) --><div class="flex flex-col gap-4 bg-gray-800 p-4 rounded-xl border border-blue-700/50">
                 <div class="flex-grow w-full">
-                    <label for="keyword-input" class="block text-sm font-semibold text-blue-400 mb-1">Enter Target Keyword:</label>
+                    <label for="keyword-input" class="block text-sm font-semibold text-blue-400 mb-1" id="step-1-title">Step 1: Define Target Keyword:</label>
                     <input type="text" id="keyword-input" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg shadow-inner focus:border-blue-500 focus:ring-blue-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Cooking', 'Quantum Computing', 'Best Hiking Trails')">
                 </div>
                 <div class="flex">
@@ -243,14 +256,14 @@
                 </div>
             </div>
             
-            <!-- Content Brief Output (Step 2 - NOW HIDDEN) --><div id="brief-output" class="dashboard-card p-6 rounded-xl shadow-inner hidden border-indigo-500/30">
-                <h3 class="text-xl font-bold text-indigo-400 mb-4 border-b border-indigo-600 pb-2">Step 2: Content Strategy & Brief (Internal Data)</h3>
+            <!-- Content Brief Output (INTERNAL: Step 2) --><div id="brief-output-container" class="dashboard-card p-6 rounded-xl shadow-inner hidden border-indigo-500/30">
+                <h3 class="text-xl font-bold text-indigo-400 mb-4 border-b border-indigo-600 pb-2">Step 2 (Internal): Content Strategy & Brief</h3>
                 <div id="brief-text" class="text-sm text-gray-300 leading-relaxed"></div>
             </div>
 
-            <!-- Full-Width Content Editor (Step 3 - NOW HIDDEN) -->
-            <div class="dashboard-card p-6 rounded-xl space-y-4 hidden">
-                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 3: AI Draft Workspace (Internal View)</h2>
+            <!-- Full-Width Content Editor (INTERNAL: Step 3) -->
+            <div id="draft-editor-container" class="dashboard-card p-6 rounded-xl space-y-4 hidden">
+                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 3 (Internal): AI Draft Workspace</h2>
                 <div id="content-editor"
                      contenteditable="true"
                      class="content-editor bg-gray-800 text-gray-200 rounded-xl transition duration-150"
@@ -267,9 +280,10 @@
             </div>
 
 
-            <!-- New Step 4: Final Output (Full Workflow Result) -->
+            <!-- Final Output (USER: Step 2 / ADMIN: Step 4) -->
             <div id="final-output-section" class="pt-8 space-y-4">
-                <h2 class="text-2xl font-bold text-orange-400 mb-4 border-b border-gray-600 pb-2">Step 2: Final Optimized Narrative (Ready to Publish)</h2>
+                <h2 class="text-2xl font-bold text-orange-400 mb-4 border-b border-gray-600 pb-2" id="step-final-title">Step 2: Final Optimized Narrative (Ready to Publish)</h2>
+                 <!-- Manual trigger button for internal draft, disabled by default -->
                  <button onclick="generateFinalArticleFromInternalDraft()" id="final-article-button" class="w-full px-8 py-3 btn-orange text-white rounded-lg shadow-xl hover:scale-[1.01] disabled:bg-gray-600" disabled>
                     Render Clean, Publishable Article (Manual Trigger)
                 </button>
@@ -278,8 +292,8 @@
                 </div>
             </div>
 
-            <!-- New Step 5: Live Score (Full Workflow Result) --><div id="live-score-section" class="pt-8 space-y-4">
-                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 3: Live Content Audit & LLM Visibility Scoring</h2>
+            <!-- Live Score (USER: Step 3 / ADMIN: Step 5) --><div id="live-score-section" class="pt-8 space-y-4">
+                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2" id="step-audit-title">Step 3: Live Content Audit & LLM Visibility Scoring</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <!-- Score Dial --><div class="md:col-span-1 dashboard-card p-5 rounded-xl border-green-700/50">
@@ -341,6 +355,8 @@
         let debounceTimer;
         let db, auth; // Will be set by initFirebase
         
+        let currentView = 'user'; // Default view is 'user'
+
         // Initial target brief settings (GEO/Generative + LLM Proof Defaults)
         let targetBrief = {
             minWords: 2500,
@@ -368,8 +384,39 @@
             // Populate initial term list and calculate initial score
             updateTermListUI();
             calculateContentScore(document.getElementById('content-editor').innerHTML);
+            
+            // Set initial view mode
+            switchView(currentView);
         };
 
+        // --- View Switching Logic ---
+        function switchView(mode) {
+            currentView = mode;
+            const isUser = mode === 'user';
+            
+            const briefContainer = document.getElementById('brief-output-container');
+            const editorContainer = document.getElementById('draft-editor-container');
+            const finalArticleButton = document.getElementById('final-article-button');
+
+            // Toggle visibility of internal (admin) steps
+            briefContainer.classList.toggle('hidden', isUser);
+            editorContainer.classList.toggle('hidden', isUser);
+            
+            // The manual render button is only relevant in Admin/QA view
+            finalArticleButton.classList.toggle('hidden', isUser);
+
+            // Update titles based on view mode
+            document.getElementById('step-1-title').textContent = isUser ? 'Step 1: Define Target Keyword:' : 'Step 1 (Admin/QA): Define Target Keyword:';
+            document.getElementById('step-final-title').textContent = isUser ? 'Step 2: Final Optimized Narrative (Ready to Publish)' : 'Step 4 (Internal): Final Optimized Narrative';
+            document.getElementById('step-audit-title').textContent = isUser ? 'Step 3: Live Content Audit & LLM Visibility Scoring' : 'Step 5 (Internal): Live Content Audit & LLM Visibility Scoring';
+
+            // Update button visual state
+            document.getElementById('user-view-button').classList.toggle('bg-blue-500', isUser);
+            document.getElementById('user-view-button').classList.toggle('bg-blue-500/70', !isUser);
+            document.getElementById('admin-view-button').classList.toggle('bg-orange-500', !isUser);
+            document.getElementById('admin-view-button').classList.toggle('bg-orange-500/70', isUser);
+        }
+        
         // --- Utility Functions ---
 
         function getScoreColor(score) {
@@ -731,8 +778,9 @@
                 ✅ Final Narrative Rendered. Score: ${finalScore}/100. This content is ready for publication.
             </div>`);
 
-            // This button is now only a manual fallback, keep it disabled
+            // This button is now only a manual fallback, re-enable it for admin if needed later
             finalArticleButton.textContent = "Render Clean, Publishable Article (Manual Trigger)";
+            // It remains disabled unless explicitly needed by the Admin flow for drafting/editing
             finalArticleButton.disabled = true;
         }
     </script>
