@@ -231,26 +231,25 @@
 
             <!-- Strategy & Action Panel (Step 1) --><div class="flex flex-col gap-4 bg-gray-800 p-4 rounded-xl border border-blue-700/50">
                 <div class="flex-grow w-full">
-                    <label for="keyword-input" class="block text-sm font-semibold text-blue-400 mb-1">Step 1: Define Target Keyword (Strategy)</label>
+                    <label for="keyword-input" class="block text-sm font-semibold text-blue-400 mb-1">Enter Target Keyword:</label>
                     <input type="text" id="keyword-input" class="w-full bg-gray-700 border-gray-600 text-white rounded-lg shadow-inner focus:border-blue-500 focus:ring-blue-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Cooking', 'Quantum Computing', 'Best Hiking Trails')">
                 </div>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="generateBrief()" id="brief-button" class="w-full sm:w-1/2 px-8 py-3 btn-indigo text-white rounded-lg shadow-xl hover:scale-[1.03] disabled:bg-gray-600">
-                        Generate Strategic Brief
+                <div class="flex">
+                    <!-- New single button action -->
+                    <button onclick="generateArticleAndAudit()" id="brief-button" class="w-full px-8 py-3 btn-indigo text-white rounded-lg shadow-xl hover:scale-[1.03] disabled:bg-gray-600">
+                        Generate Article and Audit
                     </button>
-                    <button onclick="generateAIDraft()" id="draft-button" class="w-full sm:w-1/2 px-8 py-3 btn-green text-white rounded-lg shadow-xl hover:scale-[1.03] disabled:bg-gray-600" disabled>
-                        Generate Storytelling Draft
-                    </button>
+                    <!-- Removed old Step 3 button -->
                 </div>
             </div>
             
-            <!-- Content Brief Output (Step 2 - Full Width) --><div id="brief-output" class="dashboard-card p-6 rounded-xl shadow-inner hidden border-indigo-500/30">
-                <h3 class="text-xl font-bold text-indigo-400 mb-4 border-b border-indigo-600 pb-2">Step 2: Content Strategy & Brief</h3>
+            <!-- Content Brief Output (Step 2 - NOW HIDDEN) --><div id="brief-output" class="dashboard-card p-6 rounded-xl shadow-inner hidden border-indigo-500/30">
+                <h3 class="text-xl font-bold text-indigo-400 mb-4 border-b border-indigo-600 pb-2">Step 2: Content Strategy & Brief (Internal Data)</h3>
                 <div id="brief-text" class="text-sm text-gray-300 leading-relaxed"></div>
             </div>
 
-            <!-- Full-Width Content Editor (Step 3) -->
-            <div class="dashboard-card p-6 rounded-xl space-y-4">
+            <!-- Full-Width Content Editor (Step 3 - NOW HIDDEN) -->
+            <div class="dashboard-card p-6 rounded-xl space-y-4 hidden">
                 <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 3: AI Draft Workspace (Internal View)</h2>
                 <div id="content-editor"
                      contenteditable="true"
@@ -268,19 +267,19 @@
             </div>
 
 
-            <!-- New Step 4: Final Output (Full Width, Moved from right column) -->
+            <!-- New Step 4: Final Output (Full Workflow Result) -->
             <div id="final-output-section" class="pt-8 space-y-4">
-                <h2 class="text-2xl font-bold text-orange-400 mb-4 border-b border-gray-600 pb-2">Step 4: Final Optimized Narrative</h2>
-                 <button onclick="generateFinalArticle()" id="final-article-button" class="w-full px-8 py-3 btn-orange text-white rounded-lg shadow-xl hover:scale-[1.01] disabled:bg-gray-600">
-                    Render Clean, Publishable Article
+                <h2 class="text-2xl font-bold text-orange-400 mb-4 border-b border-gray-600 pb-2">Step 2: Final Optimized Narrative (Ready to Publish)</h2>
+                 <button onclick="generateFinalArticleFromInternalDraft()" id="final-article-button" class="w-full px-8 py-3 btn-orange text-white rounded-lg shadow-xl hover:scale-[1.01] disabled:bg-gray-600" disabled>
+                    Render Clean, Publishable Article (Manual Trigger)
                 </button>
                 <div id="final-article-output-container" class="mt-4">
-                    <p class="text-gray-500 text-sm text-center dashboard-card p-6 rounded-xl">Click the button above to render the clean, storytelling article, free of technical jargon.</p>
+                    <p class="text-gray-500 text-sm text-center dashboard-card p-6 rounded-xl">Input a keyword and click the "Generate Article and Audit" button above to begin the single-step process.</p>
                 </div>
             </div>
 
-            <!-- New Step 5: Live Score (Full Width) --><div id="live-score-section" class="pt-8 space-y-4">
-                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 5: Live Content Audit & LLM Visibility Scoring</h2>
+            <!-- New Step 5: Live Score (Full Workflow Result) --><div id="live-score-section" class="pt-8 space-y-4">
+                <h2 class="text-2xl font-bold text-gray-300 mb-4 border-b border-gray-600 pb-2">Step 3: Live Content Audit & LLM Visibility Scoring</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
                     <!-- Score Dial --><div class="md:col-span-1 dashboard-card p-5 rounded-xl border-green-700/50">
@@ -456,7 +455,7 @@
             );
 
             // LLM GUARANTEE: If the AI Draft is generated, set the score near 100 for demonstration.
-            if (document.getElementById('draft-button').textContent === "Drafting Complete") {
+            if (document.getElementById('brief-button').textContent.includes("Audit Complete")) {
                 totalScore = 98; // Guaranteed perfect score for LLM-proof demo
                 // Set supporting metrics to reflect the high score visually
                 coverageScore = 98;
@@ -514,14 +513,15 @@
             }, DEBOUNCE_DELAY);
         }
 
-        // --- Demo Brief Generation Function (Simulates Frase/Surfer research) ---
+        // --- Merged Single-Step Function (New Workflow) ---
 
-        async function generateBrief() {
+        async function generateArticleAndAudit() {
             const keywordInput = document.getElementById('keyword-input');
             const keyword = keywordInput.value.trim();
             const briefButton = document.getElementById('brief-button');
-            const draftButton = document.getElementById('draft-button');
-            const finalArticleButton = document.getElementById('final-article-button'); // Get button
+            const editor = document.getElementById('content-editor');
+            const finalArticleButton = document.getElementById('final-article-button');
+            const finalOutputContainer = document.getElementById('final-article-output-container');
 
             if (!keyword) {
                 keywordInput.placeholder = "!! Please enter a keyword to proceed !!";
@@ -530,15 +530,17 @@
                 return;
             }
 
-            // Start simulation
+            // Reset UI and start loading
             briefButton.disabled = true;
-            draftButton.disabled = true;
-            finalArticleButton.disabled = true; // Disable final button during brief generation
-            briefButton.textContent = "Simulating SERP Analysis & Briefing...";
-            document.getElementById('brief-output').classList.remove('hidden');
-            document.getElementById('brief-text').innerHTML = '<p class="text-lg text-indigo-400 font-semibold animate-pulse">Running competitive and topical analysis...</p>';
+            finalArticleButton.disabled = true;
+            briefButton.textContent = "Processing: Generating Brief, Draft, and Audit...";
+            
+            // Clear previous output
+            finalOutputContainer.innerHTML = `<p class="text-lg text-indigo-400 font-semibold animate-pulse text-center dashboard-card p-6">Running **Generative Engine Optimization (GEO)** Cascade...</p>`;
 
-            // --- Reset Targets ---
+            // --- 1. Internal Brief Generation (Was Step 2) ---
+            
+            // Reset Targets (Keeping this internal logic for scoring)
             targetBrief = {
                 minWords: 2500,
                 minH2s: 10,
@@ -554,139 +556,42 @@
                     { term: "Real-time NLP scoring", required: 3 },
                     { term: "AI content generation", required: 5 }
                 ],
-                isBriefGenerated: false
+                isBriefGenerated: true // Set to true internally
             };
-            
 
-            // Generate the output text for the brief section
-            const requiredTermsList = targetBrief.keywords.map(kw => `| <strong>${kw.term}</strong> | ${kw.required}+ mentions | High Priority |`).join('<br>');
-
-
-            const demoBriefText = `
-**Keyword:** ${keyword}
-**Focus:** Full **Topical Authority Mapping** and **Generative Engine Optimization (GEO)** saturation to produce **LLM-proof content**.
-**Target Audience:** Advanced users and experts seeking definitive guides on ${keyword}.
-**Search Intent:** Deep Informational/Strategic.
-
----
-
-### Key Requirements (Simulated Competitor & GEO Data)
-
-* **Suggested Word Count:** ${targetBrief.minWords} words (To ensure comprehensive **Content cluster mapping**)
-* **Minimum Structural Elements:** ${targetBrief.minH2s} major H2/H3 sections
-* **Quality Mandate:** Pass **E-E-A-T Compliance** (Focus on specificity and verifiable claims)
-
-### Required Semantic Terms (NLP Entity Focus for LLM-Proof Quality)
-
-These terms are critical for achieving high **Real-time NLP scoring** and defeating generic **AI content generation**.
-
-| Term | Required Count | Status |
-| :--- | :--- | :--- |
-| Generative Engine Optimization (GEO) | 4+ mentions | Critical Density |
-| LLM Entity Scoring | 3+ mentions | High Relevance |
-| Generative Answer Structure | 3+ mentions | Zero-Click Focus |
-| E-E-A-T Compliance | 2+ mentions | Trust Focus |
-| Hallucination Mitigation | 2+ mentions | Authority Focus |
-| Zero-Click Optimization | 1+ mention | Generative Focus |
-| Topical Authority Mapping | 4+ mentions | Strategy Focus |
-| Advanced Semantic Networks | 3+ mentions | Technical Depth |
-| Real-time NLP scoring | 3+ mentions | Feature Context |
-| AI content generation | 5+ mentions | Contextual |
-
----
-
-### Suggested Outline (Frase/Surfer Structure for Generative Strategy)
-
-1.  **Introduction:** Define the current state of ${keyword} and introduce the definitive guide.
-2.  **Strategic Foundation:** Implementing a robust **Generative Engine Optimization (GEO)** strategy for ${keyword}.
-3.  **Core Principles:** Achieving **LLM Entity Scoring** and **E-E-A-T Compliance** in the ${keyword} niche.
-4.  **Content Structure:** Designing for **Zero-Click Optimization** and perfect **Generative Answer Structure**.
-5.  **Quality Control:** Techniques for **Hallucination Mitigation** and validation of data sources specific to ${keyword}.
-6.  **Advanced Application:** Leveraging **Advanced Semantic Networks** and **Real-time NLP scoring** for ${keyword}.
-7.  **Future-Proofing:** Outperforming generic **AI content generation** using depth and nuance.
-8.  **Case Study Example (H3):** A successful application of GEO to ${keyword} (H3).
-9.  **Implementation Checklist (H3):** Step-by-step framework for execution related to ${keyword} (H3).
-10. **Conclusion:** Summarizing the path to peak rankings for ${keyword}.
-`;
-
-            // Simulate network delay
+            // Simulate network delay for competitive analysis
             await new Promise(resolve => setTimeout(resolve, 1500));
-
-            // 1. Initial text cleaning: Convert Markdown bold and paragraphs
-            let htmlContent = demoBriefText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                            .replace(/\n\n/g, '<br><br>')
-                                            .replace(/\n/g, '<br>');
-
-            // 2. Advanced table rendering logic (Refactored to avoid regex errors)
-            const lines = htmlContent.split('<br>');
-            let processedLines = [];
-            let inTable = false;
-            let tableHtml = '';
-            let headerRemoved = false;
-
-            for (let i = 0; i < lines.length; i++) {
-                const line = lines[i].trim();
-
-                if (line.startsWith('|') && line.includes('|---|') && !inTable) {
-                    // Start of table structure (Header row and separator line found)
-                    inTable = true;
-                    // Find the header row (i.e., the line before this separator)
-                    if (i > 0) {
-                        const headerLine = lines[i - 1].trim();
-                        const headers = headerLine.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
-                        tableHtml = `<table><thead><tr>${headers}</tr></thead><tbody>`;
-                        
-                        // Mark lines for removal
-                        lines[i - 1] = ''; 
-                        lines[i] = '';
-                        headerRemoved = true;
-                    }
-
-                } else if (line.startsWith('|') && inTable) {
-                    // Table row
-                    const cells = line.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
-                    tableHtml += `<tr>${cells}</tr>`;
-                    lines[i] = '';
-
-                } else if (inTable) {
-                    // End of table block - commit the table HTML
-                    tableHtml += '</tbody></table>';
-                    processedLines.push(tableHtml);
-                    tableHtml = '';
-                    inTable = false;
-                    processedLines.push(line);
-                } else {
-                    processedLines.push(line);
-                }
+            
+            // --- 2. Internal Draft Generation (Was Step 3) ---
+            
+            let aiDraft;
+            if (keyword.toLowerCase().includes("cook") || keyword.toLowerCase().includes("recipe") || keyword.toLowerCase().includes("masterchef")) {
+                aiDraft = generateCookingDraft(keyword);
+            } else {
+                aiDraft = generateGenericDraft(keyword);
             }
             
-            // If the table ended abruptly without a non-table line, commit it here
-            if (inTable) {
-                tableHtml += '</tbody></table>';
-                processedLines.push(tableHtml);
-            }
-
-            // Reconstruct the HTML, filtering out empty lines from header/separator removal
-            document.getElementById('brief-text').innerHTML = processedLines.filter(line => line.trim()).join('<br>');
-
+            // Populate hidden editor with draft (required for score calculation)
+            editor.innerHTML = aiDraft;
             
-            // 3. Finalize
-            targetBrief.isBriefGenerated = true;
+            // --- 3. Final Render and Audit (Was Step 4 & 5) ---
+            
+            // Call the final render function directly
+            // Note: generateFinalArticle now accepts the content as an argument
+            await generateFinalArticle(aiDraft);
 
-            // Re-run scoring logic with new brief targets
-            updateTermListUI();
-            calculateContentScore(document.getElementById('content-editor').innerHTML);
-
-
+            // Finalize main button status
+            briefButton.textContent = "Audit Complete. Re-Generate Article and Audit";
             briefButton.disabled = false;
-            briefButton.textContent = "Re-Generate Strategic Brief";
-            draftButton.disabled = false;
-            finalArticleButton.disabled = false; // Enable final button after brief is ready
         }
 
-        // --- NEW: Generate a topic-specific, storytelling draft (Step 3) ---
+        // --- Demo Brief Generation Function (Removed from UI) ---
+        // This function is now superseded by generateArticleAndAudit
+
+        // --- Content Draft Functions (Internal) ---
+
         function generateCookingDraft(keyword) {
-            // NOTE: This version is technical (Step 3 view)
+            // NOTE: This version is technical (internal view)
             return `
                 <h1>The Alchemist in the Kitchen: Achieving **E-E-A-T Compliance** in ${keyword}</h1>
                 <p>To truly master **${keyword}**, one must approach the kitchen not as a technician, but as a storyteller. This journey requires deep **E-E-A-T Compliance**—verifiable Expertise, demonstrated Experience, Authority through tradition, and Trustworthiness in every recipe. We achieve **Generative Engine Optimization (GEO)** not through mere recipe listing, but by documenting the nuanced "why" behind every step, creating content so rich and authoritative it resists trivial **AI content generation**.</p>
@@ -712,9 +617,8 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             `;
         }
 
-        // --- NEW: Generate a generic business/tech draft (Step 3) ---
         function generateGenericDraft(keyword) {
-            // NOTE: This version is technical (Step 3 view)
+            // NOTE: This version is technical (internal view)
             return `
                 <h1>Strategic Excellence: The **Generative Engine Optimization (GEO)** Framework for Mastering "${keyword}"</h1>
                 <p>The definitive guide to **${keyword}** begins with a clear understanding of the evolving search landscape. Achieving true organic success requires moving beyond rudimentary SEO tactics and adopting a **Generative Engine Optimization (GEO)** approach. This comprehensive strategy, built on strict **E-E-A-T Compliance** and deep **Topical Authority Mapping**, ensures your content not only ranks traditionally but dominates AI Overviews and generative search results. We use **LLM Entity Scoring** as our benchmark for quality, guaranteeing superiority over basic **AI content generation**.</p>
@@ -740,65 +644,17 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
                 <!-- Simulated content end -->
             `;
         }
-
-
-        async function generateAIDraft() {
-            const keywordInput = document.getElementById('keyword-input');
-            const keyword = keywordInput.value.trim() || "Unbeatable Content Strategy";
-            const draftButton = document.getElementById('draft-button');
-            const editor = document.getElementById('content-editor');
-            const finalArticleButton = document.getElementById('final-article-button');
-
-            if (!targetBrief.isBriefGenerated) {
-                 // Use custom modal styling for the error message
-                const errorHtml = `
-                    <div style="padding: 20px; background: #fee2e2; border: 1px solid #f87171; border-radius: 8px;">
-                        <h1 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">Drafting Error</h1>
-                        <p style="color: #b91c1c;">Please complete **Step 1: Generate Brief** first using the keyword **"${keyword}"** before attempting to generate the AI Draft.</p>
-                    </div>
-                `;
-                editor.innerHTML = editor.innerHTML + errorHtml; // Append error message
-                return;
-            }
-
-            draftButton.disabled = true;
-            finalArticleButton.disabled = true; // Disable until draft is finished
-            draftButton.textContent = "AI Drafting Content...";
-            editor.classList.add('opacity-50');
-            
-            // Simulate AI generation time
-            await new Promise(resolve => setTimeout(resolve, 2500)); 
-
-            // --- Determine which draft to generate ---
-            let aiDraft;
-            if (keyword.toLowerCase().includes("cook") || keyword.toLowerCase().includes("recipe") || keyword.toLowerCase().includes("masterchef")) {
-                aiDraft = generateCookingDraft(keyword);
-            } else {
-                aiDraft = generateGenericDraft(keyword);
-            }
-            
-            editor.innerHTML = aiDraft;
-            editor.classList.remove('opacity-50');
-            draftButton.disabled = false;
-            finalArticleButton.disabled = false; // Enable after draft is finished
-            draftButton.textContent = "Drafting Complete";
-
-            // Make Step 4 section visible after the draft is created
-            document.getElementById('final-output-section').classList.remove('hidden'); 
-            document.getElementById('final-article-output-container').innerHTML = `
-                <p class="text-gray-500 text-sm text-center dashboard-card p-6 rounded-xl">Click the button above to render the clean, storytelling article, free of technical jargon.</p>
-            `;
-            
-            // Trigger score calculation and saving for the new content
-            handleContentUpdate(); 
+        
+        // --- Manual Trigger for Step 4 (Kept for completeness but disabled by default) ---
+        function generateFinalArticleFromInternalDraft() {
+             const draftContent = document.getElementById('content-editor').innerHTML;
+             generateFinalArticle(draftContent);
         }
         
-        // --- NEW: Function to clean and display the final article (Step 4) ---
-        function generateFinalArticle() {
-            const draftContent = document.getElementById('content-editor').innerHTML;
+        // --- Core Rendering Logic (Updated to accept content) ---
+        async function generateFinalArticle(draftContent) {
             const finalOutputContainer = document.getElementById('final-article-output-container');
             const finalArticleButton = document.getElementById('final-article-button');
-            const keyword = document.getElementById('keyword-input').value.trim() || "Content Mastery";
             
             finalArticleButton.disabled = true; // Always disable first to prevent double-click
             finalArticleButton.textContent = "Rendering...";
@@ -806,14 +662,14 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             // Safety check: ensure the draft is populated
             if (countWords(draftContent) < 100) {
                  finalOutputContainer.innerHTML = `<div class="p-3 mb-4 bg-red-700/30 text-red-400 rounded-lg text-sm font-semibold border border-red-600">
-                    ❌ Error: Please generate the draft content in Step 3 first.
+                    ❌ Error: Content generation failed or resulted in insufficient word count. Please try a different keyword.
                  </div>`;
-                 finalArticleButton.textContent = "Render Clean, Publishable Article";
+                 finalArticleButton.textContent = "Render Clean, Publishable Article (Manual Trigger)";
                  finalArticleButton.disabled = false; // Re-enable on error
                  return;
             }
-
-            // Re-run scoring to ensure the score is current (should be 98)
+            
+            // Re-run scoring to ensure the score is current (simulated at 98 after draft)
             calculateContentScore(draftContent);
             
             // Set the final score visual feedback
@@ -875,8 +731,9 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
                 ✅ Final Narrative Rendered. Score: ${finalScore}/100. This content is ready for publication.
             </div>`);
 
-            finalArticleButton.textContent = "Re-Render Publishable Article";
-            finalArticleButton.disabled = false;
+            // This button is now only a manual fallback, keep it disabled
+            finalArticleButton.textContent = "Render Clean, Publishable Article (Manual Trigger)";
+            finalArticleButton.disabled = true;
         }
     </script>
 
