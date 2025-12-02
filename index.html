@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unified Content Optimization Editor (Pro-Concept)</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better readability and UI */
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .content-editor {
+            min-height: 500px;
+            border: 1px solid #e2e8f0;
+            padding: 1.5rem;
+            line-height: 1.75;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+        }
+        /* Style for the Content Score Dial */
+        .score-dial {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            transition: background-color 0.5s, transform 0.3s;
+        }
+        .score-dial-container {
+             background: #cbd5e1; /* Gray background for the container */
+             padding: 10px;
+             border-radius: 50%;
+        }
+    </style>
+    <!-- Firebase Imports -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Set Firebase Log Level to Debug
+        setLogLevel('Debug');
+
+        let app;
+        let db;
+        let auth;
+        let userId = null;
+        let appId = 'unified-seo-tool';
+
+        // Global function to be called from non-module script
+        window.initFirebase = async () => {
+            try {
+                // Mandatory Firebase Config and App ID setup
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+                if (Object.keys(firebaseConfig).length === 0) {
+                    console.error("Firebase config is missing. Cannot initialize Firestore.");
+                    return;
+                }
+
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authentication
+                const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Wait for auth state change and set user ID
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        document.getElementById('user-id-display').textContent = `User ID: ${userId}`;
+                        console.log("Firebase initialized and user signed in:", userId);
+
+                        // Once authenticated, attempt to load the last saved draft
+                        window.loadDraft();
+
+                    } else {
+                        console.error("User is not signed in.");
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+            }
+        };
+
+        // --- Firestore Functions ---
+
+        window.saveDraft = async (content, keyword) => {
+            if (!db || !userId) {
+                console.error("Database not ready or user not authenticated.");
+                return;
+            }
+            if (!content) return;
+
+            const docPath = `/artifacts/${appId}/users/${userId}/drafts/current`;
+            const draftRef = doc(db, docPath);
+
+            try {
+                await setDoc(draftRef, {
+                    content: content,
+                    keyword: keyword || 'N/A',
+                    lastUpdated: new Date().toISOString()
+                }, { merge: true });
+                console.log("Draft saved successfully to Firestore.");
+            } catch (error) {
+                console.error("Error saving draft:", error);
+            }
+        };
+
+        window.loadDraft = async () => {
+            if (!db || !userId) {
+                console.warn("Database not ready, cannot load draft.");
+                return;
+            }
+
+            const docPath = `/artifacts/${appId}/users/${userId}/drafts/current`;
+            const draftRef = doc(db, docPath);
+
+            try {
+                const docSnap = await getDoc(draftRef);
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    document.getElementById('keyword-input').value = data.keyword;
+                    document.getElementById('content-editor').innerHTML = data.content;
+                    console.log("Draft loaded successfully:", data.keyword);
+                } else {
+                    console.log("No previous draft found.");
+                }
+            } catch (error) {
+                console.error("Error loading draft:", error);
+            }
+        };
+    </script>
+</head>
+<body class="p-4 md:p-8 bg-gray-50">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-indigo-700 mb-2 rounded-lg bg-white p-3 shadow-md">
+            The Ultimate Content Forge
+        </h1>
+        <p class="text-gray-600 mb-6" id="user-id-display">Initializing user...</p>
+
+        <div class="bg-white p-6 rounded-xl shadow-2xl space-y-6">
+
+            <!-- Keyword & Brief Generation Panel -->
+            <div class="flex flex-col sm:flex-row gap-4 items-end">
+                <div class="flex-grow w-full">
+                    <label for="keyword-input" class="block text-sm font-medium text-gray-700 mb-1">Target Keyword (e.g., "AI powered content optimization tools")</label>
+                    <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword">
+                </div>
+                <button onclick="generateBrief()" id="brief-button" class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-150 transform hover:scale-[1.02] disabled:bg-indigo-400">
+                    Generate Content Brief & SERP Analysis
+                </button>
+            </div>
+
+            <!-- Main Workspace: Editor and Score Panel -->
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+
+                <!-- Content Editor (3/4 width on desktop) -->
+                <div class="lg:col-span-3">
+                    <h2 class="text-xl font-semibold text-gray-800 mb-3">Content Editor</h2>
+                    <div id="content-editor"
+                         contenteditable="true"
+                         class="content-editor bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-xl"
+                         oninput="handleContentUpdate()">
+                         <!-- Placeholder content - use H1, H2, and P for structure -->
+                         <h1>[Your Title Here - Include Primary Keyword]</h1>
+                         <p>Start writing your introduction here. The Content Score will update automatically.</p>
+                         <h2>The First Main Section Topic</h2>
+                         <p>Expand on the key topics identified in the brief. Remember to include important semantic keywords.</p>
+                    </div>
+                    <p class="mt-3 text-sm text-gray-500">Word Count: <span id="word-count">0</span>. Last Save: <span id="last-save">Never</span></p>
+                </div>
+
+                <!-- Optimization Score Panel (1/4 width on desktop) -->
+                <div class="lg:col-span-1 bg-white border border-indigo-100 p-4 rounded-xl shadow-inner sticky top-8 h-fit">
+                    <h2 class="text-xl font-bold text-center text-indigo-800 mb-4">Live Optimization Score</h2>
+
+                    <div class="score-dial-container mx-auto mb-6">
+                        <div id="content-score-dial" class="score-dial" style="background-color: #fca5a5;">
+                            0
+                        </div>
+                    </div>
+
+                    <!-- Optimization Checklist -->
+                    <div class="space-y-3">
+                        <h3 class="text-lg font-semibold text-gray-700 border-b pb-1 mb-2">Optimization Insights</h3>
+                        <div id="score-details" class="text-sm space-y-2">
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Coverage Score:</span> <span id="coverage-score" class="font-bold text-red-500">0%</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Word Count:</span> <span id="word-count-metric" class="font-bold text-red-500">0 / 1500</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Readability:</span> <span id="readability-grade" class="font-bold text-yellow-600">Unknown</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Structure (H2s):</span> <span id="h2-count" class="font-bold text-red-500">0 / 6</span></p>
+                        </div>
+
+                        <div id="llm-suggestions" class="mt-4 pt-4 border-t border-gray-200">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Semantic Term Coverage</h3>
+                            <p class="text-xs text-gray-500 mb-2">Required by SERP Analysis (Gemini API)</p>
+                            <ul id="term-list" class="space-y-1 text-sm">
+                                <li class="text-gray-500">AI writing assistant (0/3)</li>
+                                <li class="text-gray-500">Topical authority (0/2)</li>
+                                <li class="text-gray-500">Content brief generation (0/1)</li>
+                                <li class="text-gray-500">SERP analysis (0/1)</li>
+                            </ul>
+                        </div>
+
+                        <div id="brief-output" class="mt-6 pt-4 border-t border-gray-200 hidden">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Content Brief Outline</h3>
+                            <div id="brief-text" class="text-sm text-gray-600"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Block -->
+    <script>
+        // Global Constants and State
+        const DEBOUNCE_DELAY = 1000; // ms
+        let debounceTimer;
+        let db, auth; // Will be set by initFirebase
+        let targetBrief = {
+            minWords: 1500,
+            minH2s: 6,
+            keywords: [
+                { term: "AI writing assistant", required: 3 },
+                { term: "Topical authority", required: 2 },
+                { term: "Content brief generation", required: 1 },
+                { term: "SERP analysis", required: 1 },
+                { term: "NLP recommendations", required: 1 },
+                { term: "on-page optimization", required: 2 },
+                { term: "content cluster", required: 1 }
+            ]
+        };
+
+        window.onload = function() {
+            // Initialize Firebase services defined in the module script
+            if (typeof window.initFirebase === 'function') {
+                window.initFirebase();
+            }
+            // Populate initial term list
+            updateTermListUI();
+        };
+
+        // --- Utility Functions ---
+
+        function getScoreColor(score) {
+            if (score >= 80) return '#10b981'; // Green (Excellent)
+            if (score >= 60) return '#f59e0b'; // Amber (Good)
+            if (score >= 40) return '#f97316'; // Orange (Needs Work)
+            return '#ef4444'; // Red (Poor)
+        }
+
+        function countOccurrences(text, term) {
+            // Simple case-insensitive match
+            const regex = new RegExp(term, 'gi');
+            return (text.match(regex) || []).length;
+        }
+
+        function countWords(text) {
+             const cleanText = text.replace(/<[^>]*>/g, '').trim(); // Remove HTML tags
+             if (cleanText === '') return 0;
+             return cleanText.split(/\s+/).length;
+        }
+
+        // --- UI Update & Scoring Logic ---
+
+        function updateTermListUI() {
+            const listElement = document.getElementById('term-list');
+            listElement.innerHTML = '';
+            targetBrief.keywords.forEach(kw => {
+                const li = document.createElement('li');
+                const content = document.getElementById('content-editor').textContent || '';
+                const count = countOccurrences(content, kw.term);
+                const color = count >= kw.required ? 'text-green-600' : (count > 0 ? 'text-yellow-600' : 'text-gray-500');
+                li.className = color;
+                li.textContent = `${kw.term} (${count}/${kw.required})`;
+                listElement.appendChild(li);
+            });
+        }
+
+        function calculateContentScore(content) {
+            const wordCount = countWords(content);
+            const h2Count = (content.match(/<h2/gi) || []).length;
+            const textContent = document.getElementById('content-editor').textContent || '';
+
+            // 1. Coverage Score (50% weight)
+            let coveredTerms = 0;
+            let totalTerms = targetBrief.keywords.length;
+            targetBrief.keywords.forEach(kw => {
+                const count = countOccurrences(textContent, kw.term);
+                if (count >= kw.required) {
+                    coveredTerms++;
+                }
+            });
+            const coverageRatio = totalTerms > 0 ? coveredTerms / totalTerms : 0;
+            let coverageScore = Math.min(100, Math.round(coverageRatio * 100)); // Capped at 100
+
+            // 2. Word Count Score (30% weight)
+            const wordRatio = Math.min(1, wordCount / targetBrief.minWords);
+            let wordScore = Math.round(wordRatio * 100);
+
+            // 3. Structure Score (10% weight)
+            const structureRatio = Math.min(1, h2Count / targetBrief.minH2s);
+            let structureScore = Math.round(structureRatio * 100);
+
+            // 4. Readability Score (10% weight)
+            // This would normally be an LLM call. Simulate based on word count:
+            let readabilityScore = wordCount > 500 ? 80 : 50; // Assume good readability for shorter text initially
+
+            // Combined Score (Total must be 100 max)
+            const totalScore = Math.round(
+                (coverageScore * 0.50) +
+                (wordScore * 0.30) +
+                (structureScore * 0.10) +
+                (readabilityScore * 0.10)
+            );
+
+            // Update UI metrics
+            document.getElementById('coverage-score').textContent = `${coverageScore}%`;
+            document.getElementById('word-count-metric').textContent = `${wordCount} / ${targetBrief.minWords}`;
+            document.getElementById('h2-count').textContent = `${h2Count} / ${targetBrief.minH2s}`;
+
+            // Update readability metric (simulated LLM analysis)
+            let readabilityGrade = "Needs Analysis";
+            if (wordCount > 500) {
+                 readabilityGrade = totalScore > 75 ? "Grade 8-10 (Good)" : "Grade 11+ (Complex)";
+            } else if (wordCount > 0) {
+                readabilityGrade = "Grade 7 (Easy)";
+            }
+            document.getElementById('readability-grade').textContent = readabilityGrade;
+
+
+            // Update Dial
+            const dial = document.getElementById('content-score-dial');
+            dial.textContent = totalScore;
+            dial.style.backgroundColor = getScoreColor(totalScore);
+
+            updateTermListUI();
+            return totalScore;
+        }
+
+        function handleContentUpdate() {
+            clearTimeout(debounceTimer);
+            const content = document.getElementById('content-editor').innerHTML;
+            const keyword = document.getElementById('keyword-input').value;
+
+            // Update simple metrics instantly
+            document.getElementById('word-count').textContent = countWords(content);
+            calculateContentScore(content);
+
+            // Debounce the heavy operations (LLM scoring and saving)
+            debounceTimer = setTimeout(() => {
+                console.log("Saving draft and performing LLM analysis...");
+                // Save to Firestore (async function from module script)
+                window.saveDraft(content, keyword);
+                document.getElementById('last-save').textContent = new Date().toLocaleTimeString();
+
+                // Placeholder for real-time LLM analysis API call
+                // analyzeContentAPI(content, targetBrief);
+
+            }, DEBOUNCE_DELAY);
+        }
+
+        // --- AI/API Functions (Placeholder Structure) ---
+
+        async function generateBrief() {
+            const keywordInput = document.getElementById('keyword-input');
+            const keyword = keywordInput.value.trim();
+            const button = document.getElementById('brief-button');
+
+            if (!keyword) {
+                alert("Please enter a target keyword first.");
+                keywordInput.focus();
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = "Analyzing SERP & Generating Brief...";
+            document.getElementById('brief-text').innerHTML = '<p class="text-sm text-gray-500">Querying Gemini API for SERP analysis and outline...</p>';
+            document.getElementById('brief-output').classList.remove('hidden');
+
+            try {
+                // 1. Prepare System Instruction and Query
+                const systemPrompt = "You are a Content Strategy Analyst. Your task is to analyze the top search results for a given keyword using Google Search grounding and generate a comprehensive, actionable content brief. Focus on identifying the key topics, competitor word count averages, and the essential structure (H2s) needed to rank.";
+                const userQuery = `Generate a detailed SEO content brief for the target keyword: "${keyword}". Include a suggested minimum word count, at least 6 primary H2 section ideas, and 5-7 semantic terms that MUST be included in the content based on competitor analysis. Format the output using basic Markdown.`;
+
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=`;
+                const apiKey = "";
+
+                const payload = {
+                    contents: [{ parts: [{ text: userQuery }] }],
+                    tools: [{ "google_search": {} }],
+                    systemInstruction: { parts: [{ text: systemPrompt }] },
+                };
+
+                let response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+
+                const result = await response.json();
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Failed to generate brief.";
+
+                // 2. Display Brief Output
+                // Use a simple Markdown renderer for the brief (simulated)
+                const htmlContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                        .replace(/\n\n/g, '<br><br>')
+                                        .replace(/\n/g, '<br>');
+
+                document.getElementById('brief-text').innerHTML = htmlContent;
+
+                // 3. Update the target brief settings based on the LLM's response (SIMULATED FOR THIS POC)
+                // In a production app, you would parse the suggested word count and terms from the LLM's structured output.
+                targetBrief.minWords = 1500;
+                targetBrief.minH2s = 6;
+                // For demonstration, we'll keep the static keywords, but in reality, they would come from the LLM.
+                updateTermListUI();
+                calculateContentScore(document.getElementById('content-editor').innerHTML);
+
+
+            } catch (error) {
+                console.error("Error during brief generation:", error);
+                document.getElementById('brief-text').innerHTML = `<p class="text-red-600">Error generating brief: ${error.message}. Please check console for details.</p>`;
+            } finally {
+                button.disabled = false;
+                button.textContent = "Generate Content Brief & SERP Analysis";
+            }
+        }
+
+        // This function would be implemented using a structured JSON response to get the score components in a real app
+        async function analyzeContentAPI(content, brief) {
+            // Placeholder for a real-time LLM scoring API call
+            // The JSON response schema would look like:
+            // { "totalScore": 85, "coverageScore": 90, "readabilityGrade": "8-10", "suggestions": ["Include mention of 'MarketMuse strategy'", "..."] }
+            // The current calculateContentScore function provides the front-end simulation.
+        }
+    </script>
+
+    <script>
+        // Start Firebase Initialization
+        // Must be in its own script block to call the function defined in the module script
+    </script>
+</body>
+</html>
