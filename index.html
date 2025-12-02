@@ -521,6 +521,7 @@
             const keyword = keywordInput.value.trim();
             const briefButton = document.getElementById('brief-button');
             const draftButton = document.getElementById('draft-button');
+            const finalArticleButton = document.getElementById('final-article-button'); // Get button
 
             if (!keyword) {
                 keywordInput.placeholder = "!! Please enter a keyword to proceed !!";
@@ -532,6 +533,7 @@
             // Start simulation
             briefButton.disabled = true;
             draftButton.disabled = true;
+            finalArticleButton.disabled = true; // Disable final button during brief generation
             briefButton.textContent = "Simulating SERP Analysis & Briefing...";
             document.getElementById('brief-output').classList.remove('hidden');
             document.getElementById('brief-text').innerHTML = '<p class="text-lg text-indigo-400 font-semibold animate-pulse">Running competitive and topical analysis...</p>';
@@ -679,6 +681,7 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             briefButton.disabled = false;
             briefButton.textContent = "Re-Generate Strategic Brief";
             draftButton.disabled = false;
+            finalArticleButton.disabled = false; // Enable final button after brief is ready
         }
 
         // --- NEW: Generate a topic-specific, storytelling draft (Step 3) ---
@@ -744,6 +747,7 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             const keyword = keywordInput.value.trim() || "Unbeatable Content Strategy";
             const draftButton = document.getElementById('draft-button');
             const editor = document.getElementById('content-editor');
+            const finalArticleButton = document.getElementById('final-article-button');
 
             if (!targetBrief.isBriefGenerated) {
                  // Use custom modal styling for the error message
@@ -758,6 +762,7 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             }
 
             draftButton.disabled = true;
+            finalArticleButton.disabled = true; // Disable until draft is finished
             draftButton.textContent = "AI Drafting Content...";
             editor.classList.add('opacity-50');
             
@@ -775,11 +780,14 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             editor.innerHTML = aiDraft;
             editor.classList.remove('opacity-50');
             draftButton.disabled = false;
+            finalArticleButton.disabled = false; // Enable after draft is finished
             draftButton.textContent = "Drafting Complete";
 
             // Make Step 4 section visible after the draft is created
-            document.getElementById('final-article-output-container').classList.remove('hidden');
-            document.getElementById('final-article-output').innerHTML = '<p class="text-gray-500 text-center">Click the button above to render the clean, storytelling article, free of technical jargon.</p>';
+            document.getElementById('final-output-section').classList.remove('hidden'); 
+            document.getElementById('final-article-output-container').innerHTML = `
+                <p class="text-gray-500 text-sm text-center dashboard-card p-6 rounded-xl">Click the button above to render the clean, storytelling article, free of technical jargon.</p>
+            `;
             
             // Trigger score calculation and saving for the new content
             handleContentUpdate(); 
@@ -789,15 +797,27 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
         function generateFinalArticle() {
             const draftContent = document.getElementById('content-editor').innerHTML;
             const finalOutputContainer = document.getElementById('final-article-output-container');
+            const finalArticleButton = document.getElementById('final-article-button');
             const keyword = document.getElementById('keyword-input').value.trim() || "Content Mastery";
             
+            finalArticleButton.disabled = true; // Always disable first to prevent double-click
+            finalArticleButton.textContent = "Rendering...";
+
+            // Safety check: ensure the draft is populated
+            if (countWords(draftContent) < 100) {
+                 finalOutputContainer.innerHTML = `<div class="p-3 mb-4 bg-red-700/30 text-red-400 rounded-lg text-sm font-semibold border border-red-600">
+                    ❌ Error: Please generate the draft content in Step 3 first.
+                 </div>`;
+                 finalArticleButton.textContent = "Render Clean, Publishable Article";
+                 finalArticleButton.disabled = false; // Re-enable on error
+                 return;
+            }
+
             // Re-run scoring to ensure the score is current (should be 98)
             calculateContentScore(draftContent);
             
             // Set the final score visual feedback
             const finalScore = document.getElementById('content-score-dial').textContent;
-            
-            let finalHtml = `<div id="final-article-output" class="rounded-xl shadow-2xl">`;
             
             // --- JARGON REPLACEMENT MAPPING ---
             let cleanContent = draftContent;
@@ -845,14 +865,18 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
             cleanContent = cleanContent.replace(/Real-time NLP scoring and the Future of Generic Content Automation/gi, 'Continuous Quality Assessment and the Future of Content');
             
             
-            finalHtml += cleanContent;
+            let finalHtml = `<div id="final-article-output" class="rounded-xl shadow-2xl">${cleanContent}</div>`;
             
-            finalOutputContainer.innerHTML = finalHtml + '</div>';
+            // Clear the container and insert the new content
+            finalOutputContainer.innerHTML = finalHtml;
             
             // Add a status message
             finalOutputContainer.insertAdjacentHTML('afterbegin', `<div class="p-3 mb-4 bg-orange-700/30 text-orange-400 rounded-lg text-sm font-semibold border border-orange-600">
                 ✅ Final Narrative Rendered. Score: ${finalScore}/100. This content is ready for publication.
             </div>`);
+
+            finalArticleButton.textContent = "Re-Render Publishable Article";
+            finalArticleButton.disabled = false;
         }
     </script>
 
