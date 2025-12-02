@@ -623,11 +623,18 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
 
             // --- Dynamic LLM-Proof Draft: The generated content is now about the KEYWORD ---
             
-            // This is a dynamic, high-scoring template that embeds all required GEO/SEO/E-E-A-T terms
-            // and hits the 2500 word and 10 H2 targets.
-            
+            // Determine content context based on keyword for more relevant dummy content
+            let coreTopic;
+            if (keyword.toLowerCase().includes("cook") || keyword.toLowerCase().includes("recipe") || keyword.toLowerCase().includes("food")) {
+                coreTopic = "Culinary Mastery: Achieving Perfection in ";
+            } else if (keyword.toLowerCase().includes("quantum") || keyword.toLowerCase().includes("finance") || keyword.toLowerCase().includes("tech")) {
+                coreTopic = "Technical Precision: Mastering the Future of ";
+            } else {
+                coreTopic = "Strategic Excellence: The Definitive Guide to ";
+            }
+
             const aiDraft = `
-                <h1>The Definitive Guide to **Generative Engine Optimization (GEO)** for Mastering "${keyword}"</h1>
+                <h1>${coreTopic} **Generative Engine Optimization (GEO)** for Mastering "${keyword}"</h1>
                 <p>To produce truly authoritative content on **${keyword}**, we must first reject the status quo of simple keyword relevance. The future of search—dominated by generative AI models like ChatGPT and Claude—demands content built for **Generative Engine Optimization (GEO)**. Our strategy ensures complete **E-E-A-T Compliance** and leverages deep **Topical Authority Mapping** to achieve an unbeatable **LLM Entity Scoring**, setting your article apart from the sea of generic **AI content generation**.</p>
                 <p>This comprehensive guide provides the technical blueprint and strategic depth necessary for **Zero-Click Optimization** in the modern SERP, ensuring your expertise is recognized as the definitive source.</p>
 
@@ -679,4 +686,4 @@ These terms are critical for achieving high **Real-time NLP scoring** and defeat
         // Start Firebase Initialization
     </script>
 </body>
-</html>
+</html>}
