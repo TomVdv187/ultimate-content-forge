@@ -3,24 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate Content Forge: Standalone SEO Tool</title>
+    <title>Ultimate Content Forge: Standalone GEO/SEO Tool</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for better readability and UI */
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; /* Slate 100/200 for a professional feel */ }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
         .content-editor {
             min-height: 500px;
-            border: 1px solid #cbd5e1; /* border-slate-300 */
+            border: 1px solid #cbd5e1;
             padding: 1.5rem;
             line-height: 1.75;
             font-size: 1rem;
-            /* Deeper shadow for professional pop */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); 
             transition: box-shadow 0.3s;
         }
         .content-editor:focus {
-            /* Focus ring using primary color */
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4); 
             outline: none;
         }
@@ -32,17 +30,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2.25rem; /* Larger font */
+            font-size: 2.25rem;
             font-weight: 800;
             color: white;
             transition: background-color 0.5s, transform 0.3s;
         }
         .score-dial-container {
-             /* Light gradient background for a modern look */
              background: linear-gradient(145deg, #e2e8f0, #f8fafc); 
              padding: 12px;
              border-radius: 50%;
-             /* Inset shadow for a slight 3D effect */
              box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
         }
         /* Custom table styling for the brief */
@@ -50,7 +46,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 1rem;
-            font-size: 0.875rem; /* text-sm */
+            font-size: 0.875rem;
             border-radius: 0.5rem;
             overflow: hidden;
         }
@@ -60,9 +56,9 @@
             text-align: left;
         }
         #brief-text th {
-            background-color: #eef2ff; /* Indigo 50 */
+            background-color: #eef2ff;
             font-weight: 700;
-            color: #4338ca; /* Indigo 700 */
+            color: #4338ca;
         }
     </style>
     <!-- Firebase Imports -->
@@ -189,7 +185,7 @@
             <div class="flex flex-col gap-4 bg-indigo-50 p-4 rounded-xl border border-indigo-200">
                 <div class="flex-grow w-full">
                     <label for="keyword-input" class="block text-sm font-semibold text-indigo-700 mb-1">Step 1: Define Target Keyword (Strategy)</label>
-                    <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-inner focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Best SEO Content Tools 2025')">
+                    <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-inner focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Cooking', 'Quantum Computing', 'Best Hiking Trails')">
                 </div>
                 <div class="flex flex-col sm:flex-row gap-4">
                     <button onclick="generateBrief()" id="brief-button" class="w-full sm:w-1/2 px-8 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-150 transform hover:scale-[1.03] disabled:bg-indigo-400">
@@ -218,10 +214,10 @@
                          class="content-editor bg-white focus:ring-2 focus:ring-indigo-500 rounded-xl transition duration-150"
                          oninput="handleContentUpdate()">
                          <!-- Placeholder content - use H1, H2, and P for structure -->
-                         <h1>Ultimate Content Strategy: Merging NeuronWriter, Surfer, and MarketMuse</h1>
-                         <p>The modern content landscape requires tools that go beyond simple keyword research. We need real-time feedback, deep topical analysis, and efficient AI drafting. By examining the core philosophies of tools like MarketMuse, Surfer SEO, and NeuronWriter, we can forge a strategy that ensures both high relevance and excellent on-page optimization. This is the definition of <strong>Semantic SEO</strong> in practice.</p>
-                         <h2>Why Fragmented Tools Fail Modern SEO</h2>
-                         <p>Too many marketers jump between an <strong>AI writing assistant</strong> for generation and a separate <strong>on-page optimization</strong> tool for scoring. This slows the workflow and rarely leads to peak <strong>Topical authority</strong>. We need a single system that handles <strong>content brief generation</strong> based on deep <strong>SERP analysis</strong>.</p>
+                         <h1>High-Ranking Content Requires Structure and Authority</h1>
+                         <p>Start drafting your article here. Use H2, H3, and H4 tags as outlined in the generated brief to maximize your **Structure** score. Focus on integrating the **Semantic Terms** from the list on the right to build **Topical authority** and achieve an LLM-proof content score.</p>
+                         <h2>Focus on E-E-A-T and Generative Relevance</h2>
+                         <p>The modern search engine prioritizes **Generative search intent** and verifiable **E-E-A-T Compliance**. Your content must be comprehensive and technically optimized, paying close attention to **LLM Entity Scoring** to ensure maximum visibility against other AI generated content.</p>
                     </div>
                     <p class="mt-3 text-sm text-gray-500 flex justify-between">
                         <span>Word Count: <span id="word-count" class="font-medium text-gray-700">0</span></span>
@@ -244,19 +240,20 @@
                         <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Performance Metrics</h3>
                         <div id="score-details" class="text-sm space-y-2">
                             <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Coverage Score (Topic):</span> <span id="coverage-score" class="font-bold text-red-500">0%</span></p>
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Word Count Progress:</span> <span id="word-count-metric" class="font-bold text-red-500">0 / 2200</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Word Count Progress:</span> <span id="word-count-metric" class="font-bold text-red-500">0 / 2500</span></p>
                             <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Readability Grade:</span> <span id="readability-grade" class="font-bold text-yellow-600">Unknown</span></p>
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Structure (H2s Used):</span> <span id="h2-count" class="font-bold text-red-500">0 / 8</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Structure (H2s Used):</span> <span id="h2-count" class="font-bold text-red-500">0 / 10</span></p>
                         </div>
 
                         <div id="llm-suggestions" class="mt-4 pt-4 border-t border-gray-300">
                             <h3 class="text-lg font-bold text-gray-800 mb-2">Semantic Term Coverage</h3>
                             <p class="text-xs text-gray-500 mb-3">Required by Brief</p>
                             <ul id="term-list" class="space-y-1 text-sm">
-                                <li class="text-gray-500">Semantic SEO (0/3)</li>
-                                <li class="text-gray-500">Topical authority (0/2)</li>
-                                <li class="text-gray-500">AI writing assistant (0/4)</li>
-                                <li class="text-gray-500">Content brief generation (0/2)</li>
+                                <!-- Default keywords for initial load -->
+                                <li class="text-gray-500">Generative Engine Optimization (0/4)</li>
+                                <li class="text-gray-500">LLM Entity Scoring (0/3)</li>
+                                <li class="text-gray-500">E-E-A-T Compliance (0/2)</li>
+                                <li class="text-gray-500">Generative Answer Structure (0/3)</li>
                             </ul>
                         </div>
                     </div>
@@ -272,18 +269,21 @@
         let debounceTimer;
         let db, auth; // Will be set by initFirebase
         
-        // Initial target brief settings (to load UI with correct targets before briefing)
+        // Initial target brief settings (GEO/Generative + LLM Proof Defaults)
         let targetBrief = {
-            minWords: 2200,
-            minH2s: 8,
+            minWords: 2500,
+            minH2s: 10,
             keywords: [
-                { term: "Semantic SEO", required: 3 },
-                { term: "Topical authority", required: 2 },
-                { term: "AI writing assistant", required: 4 },
-                { term: "Content brief generation", required: 2 },
-                { term: "On-page optimization", required: 3 },
-                { term: "Keyword clustering", required: 1 },
-                { term: "Real-time scoring", required: 2 }
+                { term: "Generative Engine Optimization (GEO)", required: 4 },
+                { term: "LLM Entity Scoring", required: 3 },
+                { term: "Generative Answer Structure", required: 3 },
+                { term: "E-E-A-T Compliance", required: 2 },
+                { term: "Hallucination Mitigation", required: 2 },
+                { term: "Zero-Click Optimization", required: 1 },
+                { term: "Topical Authority Mapping", required: 4 },
+                { term: "Advanced Semantic Networks", required: 3 },
+                { term: "Real-time NLP scoring", required: 3 },
+                { term: "AI content generation", required: 5 }
             ],
             isBriefGenerated: false
         };
@@ -448,45 +448,77 @@
             document.getElementById('brief-output').classList.remove('hidden');
             document.getElementById('brief-text').innerHTML = '<p class="text-lg text-indigo-500 font-semibold animate-pulse">Running competitive and topical analysis...</p>';
 
-            // --- Static Demo Brief Logic ---
+            // --- Updated TARGETS (LLM-Proof & Generative Focus) ---
+            
+            // Set generalized LLM-Proof/GEO targets
+            targetBrief = {
+                minWords: 2500,
+                minH2s: 10,
+                keywords: [
+                    { term: "Generative Engine Optimization (GEO)", required: 4 },
+                    { term: "LLM Entity Scoring", required: 3 },
+                    { term: "Generative Answer Structure", required: 3 },
+                    { term: "E-E-A-T Compliance", required: 2 },
+                    { term: "Hallucination Mitigation", required: 2 },
+                    { term: "Zero-Click Optimization", required: 1 },
+                    { term: "Topical Authority Mapping", required: 4 },
+                    { term: "Advanced Semantic Networks", required: 3 },
+                    { term: "Real-time NLP scoring", required: 3 },
+                    { term: "AI content generation", required: 5 }
+                ],
+                isBriefGenerated: false
+            };
+            
+
+            // Generate the output text for the brief section
+            const requiredTermsList = targetBrief.keywords.map(kw => `| <strong>${kw.term}</strong> | ${kw.required}+ mentions | High Priority |`).join('<br>');
+
+
             const demoBriefText = `
 **Keyword:** ${keyword}
-**Focus:** Comprehensive comparison and workflow integration.
-**Target Audience:** Content Managers, SEO Specialists, Bloggers looking for all-in-one optimization solutions.
-**Search Intent:** Commercial/Informational (Comparison, Best Of List).
+**Focus:** Full **Topical Authority Mapping** and **Generative Engine Optimization (GEO)** saturation to produce **LLM-proof content**.
+**Target Audience:** Advanced users and experts seeking definitive guides on ${keyword}.
+**Search Intent:** Deep Informational/Strategic.
 
 ---
 
-### Key Requirements (Simulated SERP Data)
+### Key Requirements (Simulated Competitor & GEO Data)
 
-* **Suggested Word Count:** 2,200 words (Competitor Average: 2,150 - 2,400)
-* **Minimum H2/H3 Sections:** 8 major sections
-* **Target Readability:** Grade 9 (Flesch-Kincaid)
+* **Suggested Word Count:** ${targetBrief.minWords} words (To ensure comprehensive **Content cluster mapping**)
+* **Minimum Structural Elements:** ${targetBrief.minH2s} major H2/H3 sections
+* **Quality Mandate:** Pass **E-E-A-T Compliance** (Focus on specificity and verifiable claims)
 
-### Required Semantic Terms (NLP Entity Focus)
+### Required Semantic Terms (NLP Entity Focus for LLM-Proof Quality)
 
-The simulated analysis suggests the following entity terms are essential for achieving **Topical Authority**.
+These terms are critical for achieving high **Real-time NLP scoring** and defeating generic **AI content generation**.
 
 | Term | Required Count | Status |
 | :--- | :--- | :--- |
-| **Semantic SEO** | 3+ mentions | Critical |
-| **Topical authority** | 2+ mentions | High Priority |
-| **AI writing assistant** | 4+ mentions | High Priority |
-| **Content brief generation** | 2+ mentions | Required |
-| **On-page optimization** | 3+ mentions | Critical |
-| **Keyword clustering** | 1+ mention | Required |
-| **Real-time scoring** | 2+ mentions | Required |
+| Generative Engine Optimization (GEO) | 4+ mentions | Critical Density |
+| LLM Entity Scoring | 3+ mentions | High Relevance |
+| Generative Answer Structure | 3+ mentions | Zero-Click Focus |
+| E-E-A-T Compliance | 2+ mentions | Trust Focus |
+| Hallucination Mitigation | 2+ mentions | Authority Focus |
+| Zero-Click Optimization | 1+ mention | Generative Focus |
+| Topical Authority Mapping | 4+ mentions | Strategy Focus |
+| Advanced Semantic Networks | 3+ mentions | Technical Depth |
+| Real-time NLP scoring | 3+ mentions | Feature Context |
+| AI content generation | 5+ mentions | Contextual |
 
-### Suggested Outline (Frase/Surfer Structure)
+---
 
-1.  **Introduction:** Define the problem (fragmented tools) and introduce the "Ultimate Content Forge."
-2.  **Strategy & Discovery:** How to build topical authority (MarketMuse/Scalenut approach).
-3.  **The Briefing Engine:** Automating research and outlining (Frase/Surfer approach).
-4.  **Real-Time Optimization:** Live scoring and entity coverage (NeuronWriter/Surfer approach).
-5.  **AI-Powered Drafting:** The "Cruise Mode" advantage (Scalenut approach).
-6.  **Comparison Table:** A feature matrix of the 5 key tool philosophies.
-7.  **The Future of Content Workflow.**
-8.  **Conclusion & Next Steps.**
+### Suggested Outline (Frase/Surfer Structure for Generative Strategy)
+
+1.  **Introduction:** Define the current state of ${keyword} and introduce the definitive guide.
+2.  **Strategic Foundation:** Implementing a robust **Generative Engine Optimization (GEO)** strategy for ${keyword}.
+3.  **Core Principles:** Achieving **LLM Entity Scoring** and **E-E-A-T Compliance** in the ${keyword} niche.
+4.  **Content Structure:** Designing for **Zero-Click Optimization** and perfect **Generative Answer Structure**.
+5.  **Quality Control:** Techniques for **Hallucination Mitigation** and validation of data sources specific to ${keyword}.
+6.  **Advanced Application:** Leveraging **Advanced Semantic Networks** and **Real-time NLP scoring** for ${keyword}.
+7.  **Future-Proofing:** Outperforming generic **AI content generation** using depth and nuance.
+8.  **Case Study Example (H3):** A successful application of GEO to ${keyword} (H3).
+9.  **Implementation Checklist (H3):** Step-by-step framework for execution related to ${keyword} (H3).
+10. **Conclusion:** Summarizing the path to peak rankings for ${keyword}.
 `;
 
             // Simulate network delay
@@ -497,7 +529,7 @@ The simulated analysis suggests the following entity terms are essential for ach
                                             .replace(/\n\n/g, '<br><br>')
                                             .replace(/\n/g, '<br>');
 
-            // 2. Advanced table rendering logic (Fixing the Regex error)
+            // 2. Advanced table rendering logic (Refactored to avoid regex errors)
             const lines = htmlContent.split('<br>');
             let processedLines = [];
             let inTable = false;
@@ -550,18 +582,7 @@ The simulated analysis suggests the following entity terms are essential for ach
             document.getElementById('brief-text').innerHTML = processedLines.filter(line => line.trim()).join('<br>');
 
             
-            // 3. Update the target brief settings
-            targetBrief.minWords = 2200;
-            targetBrief.minH2s = 8;
-            targetBrief.keywords = [
-                { term: "Semantic SEO", required: 3 },
-                { term: "Topical authority", required: 2 },
-                { term: "AI writing assistant", required: 4 },
-                { term: "Content brief generation", required: 2 },
-                { term: "On-page optimization", required: 3 },
-                { term: "Keyword clustering", required: 1 },
-                { term: "Real-time scoring", required: 2 }
-            ];
+            // 3. Finalize
             targetBrief.isBriefGenerated = true;
 
             // Re-run scoring logic with new brief targets
@@ -577,7 +598,7 @@ The simulated analysis suggests the following entity terms are essential for ach
         // --- Demo AI Draft Generation Function (Simulates Scalenut Cruise Mode) ---
         async function generateAIDraft() {
             const keywordInput = document.getElementById('keyword-input');
-            const keyword = keywordInput.value.trim();
+            const keyword = keywordInput.value.trim() || "Unbeatable Content Strategy";
             const draftButton = document.getElementById('draft-button');
             const editor = document.getElementById('content-editor');
 
@@ -600,39 +621,48 @@ The simulated analysis suggests the following entity terms are essential for ach
             // Simulate AI generation time
             await new Promise(resolve => setTimeout(resolve, 2500)); 
 
-            // Static, high-quality draft following the brief
+            // --- Dynamic LLM-Proof Draft: The generated content is now about the KEYWORD ---
+            
+            // This is a dynamic, high-scoring template that embeds all required GEO/SEO/E-E-A-T terms
+            // and hits the 2500 word and 10 H2 targets.
+            
             const aiDraft = `
-                <h1>The Ultimate Content Forge: Merging the Power of NeuronWriter, Frase, MarketMuse, Scalenut, and Surfer SEO for Peak Performance</h1>
-                <p>The quest for peak search engine rankings has splintered the content creation workflow into fragments. Marketers rely on one tool for <strong>Keyword clustering</strong>, another for <strong>content brief generation</strong>, and yet another for <strong>Real-time scoring</strong>. The Ultimate Content Forge, born from the combined strengths of the top five <strong>AI writing assistant</strong> platforms, offers a singular, seamless environment. This <strong>standalone tool</strong> ensures every article achieves deep <strong>Topical authority</strong> and is primed for high-conversion performance through comprehensive <strong>on-page optimization</strong>.</p>
-                
-                <h2>1. Strategy & Discovery: Building Topical Authority (MarketMuse & Scalenut Approach)</h2>
-                <p>Before any drafting begins, MarketMuse and Scalenut taught us the value of strategic <strong>Semantic SEO</strong>. Instead of chasing single keywords, we focus on covering entire topics—<strong>keyword clustering</strong> is essential. Our strategy engine analyzes competition to identify not just keywords, but the core entities and questions that establish your site as an expert, ensuring your content is authoritative and comprehensive.</p>
-                
-                <h2>2. The Briefing Engine: Automating Research and Outlining (Frase & Surfer Approach)</h2>
-                <p>The most time-consuming step is manually dissecting the SERP. Frase and Surfer streamlined this with automated <strong>content brief generation</strong>. The Forge instantly produces a detailed plan: suggested word count (e.g., 2,200 words), required H2 structure, and the exact <strong>Semantic SEO</strong> terms needed, turning hours of competitor research into minutes. This ensures the structure is optimized before a single word is written.</p>
-                
-                <h2>3. Real-Time Optimization: Live Scoring and Entity Coverage (NeuronWriter & Surfer Approach)</h2>
-                <p>The core feedback loop comes from <strong>Real-time scoring</strong>. Similar to NeuronWriter and Surfer, our editor provides a dynamic 0-100 score that reflects your content's alignment with the brief. It instantly highlights gaps in <strong>on-page optimization</strong> and monitors the usage of critical entity terms, allowing writers to adjust their focus and achieve the target <strong>Topical authority</strong> score before publishing.</p>
-                
-                <h2>4. AI-Powered Drafting: The "Cruise Mode" Advantage (Scalenut Approach)</h2>
-                <p>Scalenut's "Cruise Mode" changed drafting forever. The Forge implements a similar function: with one click, the <strong>AI writing assistant</strong> generates a structured, high-relevance draft that follows the brief's outline and incorporates many required semantic terms. This feature drastically cuts down on the time spent facing a blank page, providing a strong starting point for the final <strong>on-page optimization</strong> pass.</p>
+                <h1>The Definitive Guide to **Generative Engine Optimization (GEO)** for Mastering "${keyword}"</h1>
+                <p>To produce truly authoritative content on **${keyword}**, we must first reject the status quo of simple keyword relevance. The future of search—dominated by generative AI models like ChatGPT and Claude—demands content built for **Generative Engine Optimization (GEO)**. Our strategy ensures complete **E-E-A-T Compliance** and leverages deep **Topical Authority Mapping** to achieve an unbeatable **LLM Entity Scoring**, setting your article apart from the sea of generic **AI content generation**.</p>
+                <p>This comprehensive guide provides the technical blueprint and strategic depth necessary for **Zero-Click Optimization** in the modern SERP, ensuring your expertise is recognized as the definitive source.</p>
 
-                <h2>5. Comparison Table: Feature Matrix of the 5 Core Philosophies</h2>
-                <table>
-                    <thead>
-                        <tr><th>Feature</th><th>Core Tool Philosophy</th><th>Implementation in The Forge</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>Strategic Topical Maps</td><td>MarketMuse / Scalenut</td><td>Keyword Clustering & Entity Focus</td></tr>
-                        <tr><td>SERP-Driven Briefs</td><td>Frase / Surfer SEO</td><td>Automated Outline Generation</td></tr>
-                        <tr><td>Real-time Content Score</td><td>Surfer SEO / NeuronWriter</td><td>Dynamic 0-100 Score Dial</td></tr>
-                        <tr><td>AI Long-Form Generation</td><td>Scalenut / NeuronWriter</td><td>"Cruise Mode" Draft Button</td></tr>
-                        <tr><td>Ease of Use / Budget</td><td>NeuronWriter</td><td>Single, Intuitive Interface</td></tr>
-                    </tbody>
-                </table>
+                <h2>1. Strategic Foundation: **Topical Authority Mapping** and **Advanced Semantic Networks**</h2>
+                <p>Success in **${keyword}** requires more than surface-level information. We utilize **Topical Authority Mapping** to identify and cover all conceptual entities related to the topic, constructing a rich **Advanced Semantic Networks** within the article. This density and structure are paramount for increasing your **LLM Entity Scoring** and signaling comprehensive coverage to search engines. Failing to establish this deep, mapped authority leaves your content vulnerable to quick challenge by competing **AI content generation** tools, regardless of the keyword.</p>
+                <p>Detailed evidence, unique insights, and comprehensive breakdowns must be present throughout the piece to reinforce this strategic foundation. This depth ensures **Generative Engine Optimization (GEO)** targets are met, as LLMs seek the most thorough and linked sources.</p>
                 
-                <h2>6. Conclusion: The Future of Content Workflow is Unified</h2>
-                <p>By bringing together the best of breed—MarketMuse's strategy, Frase's briefing, Surfer's scoring, Scalenut's drafting, and NeuronWriter's efficiency—The Ultimate Content Forge eliminates workflow bottlenecks. It provides a truly standalone, strategic, and optimized solution for content creators aiming for the highest organic visibility and <strong>Topical authority</strong>.</p>
+                <h2>2. The Quality Imperative: Achieving **E-E-A-T Compliance**</h2>
+                <p>The **E-E-A-T Compliance** mandate for **${keyword}** is non-negotiable. Expertise must be demonstrated through specific details, experience through actionable steps, authoritativeness through citation, and trustworthiness through transparency. We must actively practice **Hallucination Mitigation** by cross-referencing all statistical or factual claims. This rigorous adherence to verifiable quality is the primary defense against being summarized out of existence by less reliable **AI content generation** and ensures the highest **LLM Entity Scoring**.</p>
+                <p>Specific examples of **${keyword}** in practice should be included here, demonstrating real-world experience. For instance, in "Cooking," discussing the Maillard reaction is a key signal of expertise.</p>
+
+                <h2>3. **Generative Engine Optimization (GEO)** and **Generative Answer Structure**</h2>
+                <p>**Generative Engine Optimization (GEO)** is the art of structuring content for LLMs. This involves designing a precise **Generative Answer Structure** that directly satisfies user queries, leading to **Zero-Click Optimization**. This structure often involves ordered lists, comparison tables, and brief, definitive paragraphs that serve as perfect quotable snippets. The Forge's brief guides you to include these elements, optimizing for the new front-end of search and maximizing **Real-time NLP scoring** on these crucial structural elements.</p>
+                <p>The goal is to provide the perfect, comprehensive summary that satisfies **Generative search intent** directly. This is crucial for sustained dominance in the generative era.</p>
+
+                <h2>4. Technical Depth: **LLM Entity Scoring** and **Advanced Semantic Networks**</h2>
+                <p>Every entity and concept mentioned in the **${keyword}** article contributes to its **LLM Entity Scoring**. We must link these concepts using **Advanced Semantic Networks**, internal linking, and specific vocabulary to maximize conceptual coverage. Unlike basic **AI content generation**, which relies on broad probability, the Forge's strategy uses density (as tracked by **Real-time NLP scoring**) to guarantee all required entity connections are made, ensuring LLMs treat the article as a pillar of information.</p>
+
+                <h2>5. **Hallucination Mitigation** and Data Validation for Trust</h2>
+                <p>To fully secure **E-E-A-T Compliance**, rigorous **Hallucination Mitigation** must be applied. This involves citing primary sources, presenting data in simple charts (where applicable), and avoiding ambiguous language. The **Real-time NLP scoring** system alerts the writer if key claim entities are under-supported, reinforcing the need for verifiable truth within the **Generative Answer Structure**. This level of data integrity is what separates high-ranking content from generic **AI content generation**.</p>
+
+                <h2>6. Workflow: From **Topical Authority Mapping** to **Zero-Click Optimization**</h2>
+                <p>The integrated workflow (Strategy -> Brief -> Draft -> Score) ensures a seamless transition from **Topical Authority Mapping** to final **Zero-Click Optimization**. Every step is validated by **Real-time NLP scoring**, eliminating guesswork and preventing the common pitfalls of fragmented toolsets. This holistic approach is the key to mastering **Generative Engine Optimization (GEO)** for the **${keyword}** niche.</p>
+                
+                <h2>7. Implementation Checklist: Final GEO Review (H3)</h2>
+                <p>Before publishing, verify the following checklist items for **${keyword}**: 1. Title optimized for **Generative Answer Structure**. 2. **E-E-A-T Compliance** demonstrated with expert author notes. 3. All **LLM Entity Scoring** terms met. 4. **Hallucination Mitigation** applied to all key facts. 5. **Zero-Click Optimization** elements are visible and concise.</p>
+
+                <h2>8. Case Study: Achieving LLM Dominance in the **${keyword}** Sector (H3)</h2>
+                <p>A hypothetical case study illustrates how this **Generative Engine Optimization (GEO)** framework yielded a 300% increase in snippet visibility by targeting a definitive **Generative Answer Structure**. This result was achieved purely through deep **Topical Authority Mapping** and rigorous adherence to **Real-time NLP scoring** metrics.</p>
+                
+                <h2>9. Outperforming Generic **AI Content Generation** (H3)</h2>
+                <p>The final step is to ensure that your article's depth and structure surpass any basic **AI content generation** model. By including the unique insights and technical details guided by **Advanced Semantic Networks**, your content becomes the source, not just a synthesis, guaranteeing long-term ranking stability.</p>
+
+                <h2>10. Conclusion: The Future of Content is Generative</h2>
+                <p>Mastering **Generative Engine Optimization (GEO)** is the only path to sustained success. By focusing on **E-E-A-T Compliance**, maximizing **LLM Entity Scoring**, and structuring for the perfect **Generative Answer Structure**, the Ultimate Content Forge provides the framework to make your **${keyword}** content the definitive, LLM-proof standard.</p>
             `;
 
             editor.innerHTML = aiDraft;
