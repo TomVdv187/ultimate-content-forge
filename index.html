@@ -3,18 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unified Content Optimization Editor (Pro-Concept)</title>
+    <title>Ultimate Content Forge: Standalone SEO Tool</title>
     <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles for better readability and UI */
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; /* Slate 100/200 for a professional feel */ }
         .content-editor {
             min-height: 500px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #cbd5e1; /* border-slate-300 */
             padding: 1.5rem;
             line-height: 1.75;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            /* Deeper shadow for professional pop */
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); 
+            transition: box-shadow 0.3s;
+        }
+        .content-editor:focus {
+            /* Focus ring using primary color */
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4); 
+            outline: none;
         }
         /* Style for the Content Score Dial */
         .score-dial {
@@ -24,15 +31,35 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.25rem; /* Larger font */
+            font-weight: 800;
             color: white;
             transition: background-color 0.5s, transform 0.3s;
         }
         .score-dial-container {
-             background: #cbd5e1; /* Gray background for the container */
-             padding: 10px;
+             /* Light gradient background for a modern look */
+             background: linear-gradient(145deg, #e2e8f0, #f8fafc); 
+             padding: 12px;
              border-radius: 50%;
+             /* Inset shadow for a slight 3D effect */
+             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        /* Custom table styling for the brief */
+        #brief-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            font-size: 0.875rem; /* text-sm */
+        }
+        #brief-text th, #brief-text td {
+            border: 1px solid #e2e8f0;
+            padding: 0.5rem;
+            text-align: left;
+        }
+        #brief-text th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            color: #475569;
         }
     </style>
     <!-- Firebase Imports -->
@@ -145,80 +172,88 @@
         };
     </script>
 </head>
-<body class="p-4 md:p-8 bg-gray-50">
+<body class="p-4 md:p-8 bg-gray-100">
 
     <div class="max-w-7xl mx-auto">
-        <h1 class="text-3xl font-extrabold text-indigo-700 mb-2 rounded-lg bg-white p-3 shadow-md">
+        <h1 class="text-4xl font-extrabold text-indigo-700 mb-2 rounded-lg bg-white p-4 shadow-xl">
             The Ultimate Content Forge
         </h1>
-        <p class="text-gray-600 mb-6" id="user-id-display">Initializing user...</p>
+        <p class="text-gray-600 mb-6 font-mono text-xs" id="user-id-display">Initializing user...</p>
 
-        <div class="bg-white p-6 rounded-xl shadow-2xl space-y-6">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl space-y-8 border border-gray-200">
 
-            <!-- Keyword & Brief Generation Panel -->
-            <div class="flex flex-col sm:flex-row gap-4 items-end">
+            <!-- Strategy & Action Panel -->
+            <div class="flex flex-col gap-4 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
                 <div class="flex-grow w-full">
-                    <label for="keyword-input" class="block text-sm font-medium text-gray-700 mb-1">Target Keyword (e.g., "AI powered content optimization tools")</label>
-                    <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword">
+                    <label for="keyword-input" class="block text-sm font-semibold text-indigo-700 mb-1">Step 1: Define Target Keyword (Strategy)</label>
+                    <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-inner focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Best SEO Content Tools 2025')">
                 </div>
-                <button onclick="generateBrief()" id="brief-button" class="w-full sm:w-auto px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-150 transform hover:scale-[1.02] disabled:bg-indigo-400">
-                    Generate Content Brief & SERP Analysis
-                </button>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="generateBrief()" id="brief-button" class="w-full sm:w-1/2 px-8 py-3 bg-indigo-600 text-white font-bold rounded-lg shadow-lg hover:bg-indigo-700 transition duration-150 transform hover:scale-[1.03] disabled:bg-indigo-400">
+                        Generate Brief (Frase/Surfer Research)
+                    </button>
+                    <button onclick="generateAIDraft()" id="draft-button" class="w-full sm:w-1/2 px-8 py-3 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700 transition duration-150 transform hover:scale-[1.03] disabled:bg-green-400" disabled>
+                        Generate AI Draft (Scalenut Cruise Mode)
+                    </button>
+                </div>
             </div>
 
             <!-- Main Workspace: Editor and Score Panel -->
-            <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
                 <!-- Content Editor (3/4 width on desktop) -->
                 <div class="lg:col-span-3">
-                    <h2 class="text-xl font-semibold text-gray-800 mb-3">Content Editor</h2>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Drafting Workspace</h2>
                     <div id="content-editor"
                          contenteditable="true"
-                         class="content-editor bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded-xl"
+                         class="content-editor bg-white focus:ring-2 focus:ring-indigo-500 rounded-xl transition duration-150"
                          oninput="handleContentUpdate()">
                          <!-- Placeholder content - use H1, H2, and P for structure -->
-                         <h1>[Your Title Here - Include Primary Keyword]</h1>
-                         <p>Start writing your introduction here. The Content Score will update automatically.</p>
-                         <h2>The First Main Section Topic</h2>
-                         <p>Expand on the key topics identified in the brief. Remember to include important semantic keywords.</p>
+                         <h1>Ultimate Content Strategy: Merging NeuronWriter, Surfer, and MarketMuse</h1>
+                         <p>The modern content landscape requires tools that go beyond simple keyword research. We need real-time feedback, deep topical analysis, and efficient AI drafting. By examining the core philosophies of tools like MarketMuse, Surfer SEO, and NeuronWriter, we can forge a strategy that ensures both high relevance and excellent on-page optimization. This is the definition of **Semantic SEO** in practice.</p>
+                         <h2>Why Fragmented Tools Fail Modern SEO</h2>
+                         <p>Too many marketers jump between an **AI writing assistant** for generation and a separate **on-page optimization** tool for scoring. This slows the workflow and rarely leads to peak **Topical authority**. We need a single system that handles **content brief generation** based on deep **SERP analysis**.</p>
                     </div>
-                    <p class="mt-3 text-sm text-gray-500">Word Count: <span id="word-count">0</span>. Last Save: <span id="last-save">Never</span></p>
+                    <p class="mt-3 text-sm text-gray-500 flex justify-between">
+                        <span>Word Count: <span id="word-count" class="font-medium text-gray-700">0</span></span>
+                        <span>Last Save: <span id="last-save" class="font-medium text-gray-700">Never</span></span>
+                    </p>
                 </div>
 
                 <!-- Optimization Score Panel (1/4 width on desktop) -->
-                <div class="lg:col-span-1 bg-white border border-indigo-100 p-4 rounded-xl shadow-inner sticky top-8 h-fit">
-                    <h2 class="text-xl font-bold text-center text-indigo-800 mb-4">Live Optimization Score</h2>
+                <div class="lg:col-span-1 bg-gray-50 border border-indigo-100 p-5 rounded-2xl shadow-lg sticky top-8 h-fit">
+                    <h2 class="text-xl font-bold text-center text-indigo-800 mb-5">Content Score (NeuronWriter/Surfer)</h2>
 
-                    <div class="score-dial-container mx-auto mb-6">
+                    <div class="score-dial-container mx-auto mb-8">
                         <div id="content-score-dial" class="score-dial" style="background-color: #fca5a5;">
                             0
                         </div>
                     </div>
 
                     <!-- Optimization Checklist -->
-                    <div class="space-y-3">
-                        <h3 class="text-lg font-semibold text-gray-700 border-b pb-1 mb-2">Optimization Insights</h3>
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-bold text-gray-800 border-b pb-2">Performance Metrics</h3>
                         <div id="score-details" class="text-sm space-y-2">
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Coverage Score:</span> <span id="coverage-score" class="font-bold text-red-500">0%</span></p>
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Word Count:</span> <span id="word-count-metric" class="font-bold text-red-500">0 / 1500</span></p>
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Readability:</span> <span id="readability-grade" class="font-bold text-yellow-600">Unknown</span></p>
-                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Structure (H2s):</span> <span id="h2-count" class="font-bold text-red-500">0 / 6</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Coverage Score (Topic):</span> <span id="coverage-score" class="font-bold text-red-500">0%</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Word Count Progress:</span> <span id="word-count-metric" class="font-bold text-red-500">0 / 2200</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Readability Grade:</span> <span id="readability-grade" class="font-bold text-yellow-600">Unknown</span></p>
+                            <p class="flex justify-between items-center"><span class="font-medium text-gray-600">Structure (H2s Used):</span> <span id="h2-count" class="font-bold text-red-500">0 / 8</span></p>
                         </div>
 
-                        <div id="llm-suggestions" class="mt-4 pt-4 border-t border-gray-200">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Semantic Term Coverage</h3>
-                            <p class="text-xs text-gray-500 mb-2">Required by SERP Analysis (Gemini API)</p>
+                        <div id="llm-suggestions" class="mt-4 pt-4 border-t border-gray-300">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Semantic Term Coverage</h3>
+                            <p class="text-xs text-gray-500 mb-3">Required by Brief</p>
                             <ul id="term-list" class="space-y-1 text-sm">
-                                <li class="text-gray-500">AI writing assistant (0/3)</li>
+                                <li class="text-gray-500">Semantic SEO (0/3)</li>
                                 <li class="text-gray-500">Topical authority (0/2)</li>
-                                <li class="text-gray-500">Content brief generation (0/1)</li>
-                                <li class="text-gray-500">SERP analysis (0/1)</li>
+                                <li class="text-gray-500">AI writing assistant (0/4)</li>
+                                <li class="text-gray-500">Content brief generation (0/2)</li>
                             </ul>
                         </div>
 
-                        <div id="brief-output" class="mt-6 pt-4 border-t border-gray-200 hidden">
-                            <h3 class="text-lg font-semibold text-gray-700 mb-2">Content Brief Outline</h3>
-                            <div id="brief-text" class="text-sm text-gray-600"></div>
+                        <div id="brief-output" class="mt-6 pt-4 border-t border-gray-300 hidden">
+                            <h3 class="text-lg font-bold text-gray-800 mb-2">Content Brief Outline</h3>
+                            <div id="brief-text" class="text-sm text-gray-700 leading-relaxed"></div>
                         </div>
                     </div>
                 </div>
@@ -232,18 +267,21 @@
         const DEBOUNCE_DELAY = 1000; // ms
         let debounceTimer;
         let db, auth; // Will be set by initFirebase
+        
+        // Initial target brief settings (to load UI with correct targets before briefing)
         let targetBrief = {
-            minWords: 1500,
-            minH2s: 6,
+            minWords: 2200,
+            minH2s: 8,
             keywords: [
-                { term: "AI writing assistant", required: 3 },
+                { term: "Semantic SEO", required: 3 },
                 { term: "Topical authority", required: 2 },
-                { term: "Content brief generation", required: 1 },
-                { term: "SERP analysis", required: 1 },
-                { term: "NLP recommendations", required: 1 },
-                { term: "on-page optimization", required: 2 },
-                { term: "content cluster", required: 1 }
-            ]
+                { term: "AI writing assistant", required: 4 },
+                { term: "Content brief generation", required: 2 },
+                { term: "On-page optimization", required: 3 },
+                { term: "Keyword clustering", required: 1 },
+                { term: "Real-time scoring", required: 2 }
+            ],
+            isBriefGenerated: false
         };
 
         window.onload = function() {
@@ -251,16 +289,17 @@
             if (typeof window.initFirebase === 'function') {
                 window.initFirebase();
             }
-            // Populate initial term list
+            // Populate initial term list and calculate initial score
             updateTermListUI();
+            calculateContentScore(document.getElementById('content-editor').innerHTML);
         };
 
         // --- Utility Functions ---
 
         function getScoreColor(score) {
-            if (score >= 80) return '#10b981'; // Green (Excellent)
-            if (score >= 60) return '#f59e0b'; // Amber (Good)
-            if (score >= 40) return '#f97316'; // Orange (Needs Work)
+            if (score >= 85) return '#059669'; // Emerald (Excellent)
+            if (score >= 70) return '#f59e0b'; // Amber (Good)
+            if (score >= 50) return '#fb7185'; // Rose (Needs Work)
             return '#ef4444'; // Red (Poor)
         }
 
@@ -285,41 +324,52 @@
                 const li = document.createElement('li');
                 const content = document.getElementById('content-editor').textContent || '';
                 const count = countOccurrences(content, kw.term);
-                const color = count >= kw.required ? 'text-green-600' : (count > 0 ? 'text-yellow-600' : 'text-gray-500');
-                li.className = color;
-                li.textContent = `${kw.term} (${count}/${kw.required})`;
+                const color = count >= kw.required ? 'text-green-600 font-medium' : (count > 0 ? 'text-yellow-600' : 'text-gray-500');
+                li.className = `flex justify-between ${color}`;
+                li.textContent = `${kw.term}: `;
+                
+                const countSpan = document.createElement('span');
+                countSpan.textContent = `(${count}/${kw.required})`;
+                li.appendChild(countSpan);
+
                 listElement.appendChild(li);
             });
         }
 
         function calculateContentScore(content) {
             const wordCount = countWords(content);
-            const h2Count = (content.match(/<h2/gi) || []).length;
+            const h2Count = (content.match(/<h[2-6]/gi) || []).length; // Check H2 to H6 for structure
             const textContent = document.getElementById('content-editor').textContent || '';
 
-            // 1. Coverage Score (50% weight)
+            // 1. Coverage Score (50% weight) - Simulates NeuronWriter's semantic score
             let coveredTerms = 0;
             let totalTerms = targetBrief.keywords.length;
             targetBrief.keywords.forEach(kw => {
                 const count = countOccurrences(textContent, kw.term);
-                if (count >= kw.required) {
+                // Terms are considered 'covered' if half or more of the required count is met
+                if (count >= kw.required / 2) { 
                     coveredTerms++;
                 }
             });
             const coverageRatio = totalTerms > 0 ? coveredTerms / totalTerms : 0;
-            let coverageScore = Math.min(100, Math.round(coverageRatio * 100)); // Capped at 100
+            let coverageScore = Math.min(100, Math.round(coverageRatio * 100)); 
 
-            // 2. Word Count Score (30% weight)
+            // 2. Word Count Score (30% weight) - Simulates Surfer's word count target
             const wordRatio = Math.min(1, wordCount / targetBrief.minWords);
             let wordScore = Math.round(wordRatio * 100);
 
-            // 3. Structure Score (10% weight)
+            // 3. Structure Score (10% weight) - Simulates Frase's outline compliance
             const structureRatio = Math.min(1, h2Count / targetBrief.minH2s);
             let structureScore = Math.round(structureRatio * 100);
 
-            // 4. Readability Score (10% weight)
-            // This would normally be an LLM call. Simulate based on word count:
-            let readabilityScore = wordCount > 500 ? 80 : 50; // Assume good readability for shorter text initially
+            // 4. Readability/Uniqueness Score (10% weight) - Simulates MarketMuse/Scalenut quality
+            // Simulation: Higher score if word count is between 500 and 1200 (balanced length)
+            let readabilityScore = 50; 
+            if (wordCount > 500 && wordCount < 1200) {
+                 readabilityScore = 80;
+            } else if (wordCount >= 1200) {
+                readabilityScore = 90; // Reward comprehensive content
+            }
 
             // Combined Score (Total must be 100 max)
             const totalScore = Math.round(
@@ -334,15 +384,16 @@
             document.getElementById('word-count-metric').textContent = `${wordCount} / ${targetBrief.minWords}`;
             document.getElementById('h2-count').textContent = `${h2Count} / ${targetBrief.minH2s}`;
 
-            // Update readability metric (simulated LLM analysis)
-            let readabilityGrade = "Needs Analysis";
-            if (wordCount > 500) {
-                 readabilityGrade = totalScore > 75 ? "Grade 8-10 (Good)" : "Grade 11+ (Complex)";
-            } else if (wordCount > 0) {
-                readabilityGrade = "Grade 7 (Easy)";
+            // Update readability metric (simulated)
+            let readabilityGrade = "Target Grade 9";
+            if (wordCount < 100) {
+                readabilityGrade = "Too Short (Analyze)";
+            } else if (totalScore > 75) {
+                 readabilityGrade = "Grade 8-10 (Optimal)";
+            } else {
+                readabilityGrade = "Grade 11+ (Complex)";
             }
             document.getElementById('readability-grade').textContent = readabilityGrade;
-
 
             // Update Dial
             const dial = document.getElementById('content-score-dial');
@@ -362,100 +413,230 @@
             document.getElementById('word-count').textContent = countWords(content);
             calculateContentScore(content);
 
-            // Debounce the heavy operations (LLM scoring and saving)
+            // Debounce the heavy operations (saving)
             debounceTimer = setTimeout(() => {
-                console.log("Saving draft and performing LLM analysis...");
+                console.log("Saving draft...");
                 // Save to Firestore (async function from module script)
                 window.saveDraft(content, keyword);
                 document.getElementById('last-save').textContent = new Date().toLocaleTimeString();
-
-                // Placeholder for real-time LLM analysis API call
-                // analyzeContentAPI(content, targetBrief);
-
             }, DEBOUNCE_DELAY);
         }
 
-        // --- AI/API Functions (Placeholder Structure) ---
+        // --- Demo Brief Generation Function (Simulates Frase/Surfer research) ---
 
         async function generateBrief() {
             const keywordInput = document.getElementById('keyword-input');
             const keyword = keywordInput.value.trim();
-            const button = document.getElementById('brief-button');
+            const briefButton = document.getElementById('brief-button');
+            const draftButton = document.getElementById('draft-button');
 
             if (!keyword) {
-                alert("Please enter a target keyword first.");
-                keywordInput.focus();
+                keywordInput.placeholder = "!! Please enter a keyword to proceed !!";
+                keywordInput.classList.add('border-red-500');
+                setTimeout(() => keywordInput.classList.remove('border-red-500'), 2000);
                 return;
             }
 
-            button.disabled = true;
-            button.textContent = "Analyzing SERP & Generating Brief...";
-            document.getElementById('brief-text').innerHTML = '<p class="text-sm text-gray-500">Querying Gemini API for SERP analysis and outline...</p>';
+            // Start simulation
+            briefButton.disabled = true;
+            draftButton.disabled = true;
+            briefButton.textContent = "Simulating SERP Analysis & Briefing...";
             document.getElementById('brief-output').classList.remove('hidden');
+            document.getElementById('brief-text').innerHTML = '<p class="text-sm text-indigo-500 animate-pulse">Running competitive and topical analysis...</p>';
 
-            try {
-                // 1. Prepare System Instruction and Query
-                const systemPrompt = "You are a Content Strategy Analyst. Your task is to analyze the top search results for a given keyword using Google Search grounding and generate a comprehensive, actionable content brief. Focus on identifying the key topics, competitor word count averages, and the essential structure (H2s) needed to rank.";
-                const userQuery = `Generate a detailed SEO content brief for the target keyword: "${keyword}". Include a suggested minimum word count, at least 6 primary H2 section ideas, and 5-7 semantic terms that MUST be included in the content based on competitor analysis. Format the output using basic Markdown.`;
+            // --- Static Demo Brief Logic ---
+            const demoBriefText = `
+**Keyword:** ${keyword}
+**Focus:** Comprehensive comparison and workflow integration.
+**Target Audience:** Content Managers, SEO Specialists, Bloggers looking for all-in-one optimization solutions.
+**Search Intent:** Commercial/Informational (Comparison, Best Of List).
 
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=`;
-                const apiKey = "";
+---
 
-                const payload = {
-                    contents: [{ parts: [{ text: userQuery }] }],
-                    tools: [{ "google_search": {} }],
-                    systemInstruction: { parts: [{ text: systemPrompt }] },
-                };
+### Key Requirements (Simulated SERP Data)
 
-                let response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
+* **Suggested Word Count:** 2,200 words (Competitor Average: 2,150 - 2,400)
+* **Minimum H2/H3 Sections:** 8 major sections
+* **Target Readability:** Grade 9 (Flesch-Kincaid)
 
-                if (!response.ok) throw new Error(`API Error: ${response.statusText}`);
+### Required Semantic Terms (NLP Entity Focus)
 
-                const result = await response.json();
-                const text = result.candidates?.[0]?.content?.parts?.[0]?.text || "Failed to generate brief.";
+The simulated analysis suggests the following entity terms are essential for achieving **Topical Authority**.
 
-                // 2. Display Brief Output
-                // Use a simple Markdown renderer for the brief (simulated)
-                const htmlContent = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                        .replace(/\n\n/g, '<br><br>')
-                                        .replace(/\n/g, '<br>');
+| Term | Required Count | Status |
+| :--- | :--- | :--- |
+| **Semantic SEO** | 3+ mentions | Critical |
+| **Topical authority** | 2+ mentions | High Priority |
+| **AI writing assistant** | 4+ mentions | High Priority |
+| **Content brief generation** | 2+ mentions | Required |
+| **On-page optimization** | 3+ mentions | Critical |
+| **Keyword clustering** | 1+ mention | Required |
+| **Real-time scoring** | 2+ mentions | Required |
 
-                document.getElementById('brief-text').innerHTML = htmlContent;
+### Suggested Outline (Frase/Surfer Structure)
 
-                // 3. Update the target brief settings based on the LLM's response (SIMULATED FOR THIS POC)
-                // In a production app, you would parse the suggested word count and terms from the LLM's structured output.
-                targetBrief.minWords = 1500;
-                targetBrief.minH2s = 6;
-                // For demonstration, we'll keep the static keywords, but in reality, they would come from the LLM.
-                updateTermListUI();
-                calculateContentScore(document.getElementById('content-editor').innerHTML);
+1.  **Introduction:** Define the problem (fragmented tools) and introduce the "Ultimate Content Forge."
+2.  **Strategy & Discovery:** How to build topical authority (MarketMuse/Scalenut approach).
+3.  **The Briefing Engine:** Automating research and outlining (Frase/Surfer approach).
+4.  **Real-Time Optimization:** Live scoring and entity coverage (NeuronWriter/Surfer approach).
+5.  **AI-Powered Drafting:** The "Cruise Mode" advantage (Scalenut approach).
+6.  **Comparison Table:** A feature matrix of the 5 key tool philosophies.
+7.  **The Future of Content Workflow.**
+8.  **Conclusion & Next Steps.**
+`;
 
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
 
-            } catch (error) {
-                console.error("Error during brief generation:", error);
-                document.getElementById('brief-text').innerHTML = `<p class="text-red-600">Error generating brief: ${error.message}. Please check console for details.</p>`;
-            } finally {
-                button.disabled = false;
-                button.textContent = "Generate Content Brief & SERP Analysis";
+            // 1. Initial text cleaning: Convert Markdown bold and paragraphs
+            let htmlContent = demoBriefText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                            .replace(/\n\n/g, '<br><br>')
+                                            .replace(/\n/g, '<br>');
+
+            // 2. Advanced table rendering logic (Fixing the Regex error)
+            const lines = htmlContent.split('<br>');
+            let processedLines = [];
+            let inTable = false;
+            let tableHtml = '';
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+
+                if (line.startsWith('|') && line.includes('|---|') && !inTable) {
+                    // Start of table structure (Header row and separator line found)
+                    inTable = true;
+                    // Find the header row (i.e., the line before this separator)
+                    const headerLine = lines[i - 1].trim();
+                    const headers = headerLine.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
+                    
+                    tableHtml = `<table><thead><tr>${headers}</tr></thead><tbody>`;
+                    
+                    // Skip the current line (separator) and the previous line (header)
+                    lines[i - 1] = ''; 
+                    lines[i] = '';
+
+                } else if (line.startsWith('|') && inTable) {
+                    // Table row
+                    const cells = line.split('|').filter(c => c.trim()).map(c => `<td>${c.trim()}</td>`).join('');
+                    tableHtml += `<tr>${cells}</tr>`;
+                    lines[i] = '';
+
+                } else if (inTable) {
+                    // End of table block - commit the table HTML
+                    tableHtml += '</tbody></table>';
+                    processedLines.push(tableHtml);
+                    tableHtml = '';
+                    inTable = false;
+                    processedLines.push(line);
+                } else {
+                    processedLines.push(line);
+                }
             }
+            
+            // If the table ended abruptly without a non-table line, commit it here
+            if (inTable) {
+                tableHtml += '</tbody></table>';
+                processedLines.push(tableHtml);
+            }
+
+            // Reconstruct the HTML, filtering out empty lines from header/separator removal
+            document.getElementById('brief-text').innerHTML = processedLines.filter(line => line.trim()).join('<br>');
+
+            
+            // 3. Update the target brief settings
+            targetBrief.minWords = 2200;
+            targetBrief.minH2s = 8;
+            targetBrief.keywords = [
+                { term: "Semantic SEO", required: 3 },
+                { term: "Topical authority", required: 2 },
+                { term: "AI writing assistant", required: 4 },
+                { term: "Content brief generation", required: 2 },
+                { term: "On-page optimization", required: 3 },
+                { term: "Keyword clustering", required: 1 },
+                { term: "Real-time scoring", required: 2 }
+            ];
+            targetBrief.isBriefGenerated = true;
+
+            // Re-run scoring logic with new brief targets
+            updateTermListUI();
+            calculateContentScore(document.getElementById('content-editor').innerHTML);
+
+
+            briefButton.disabled = false;
+            briefButton.textContent = "Re-Generate Brief (Demo Mode Active)";
+            draftButton.disabled = false;
         }
 
-        // This function would be implemented using a structured JSON response to get the score components in a real app
-        async function analyzeContentAPI(content, brief) {
-            // Placeholder for a real-time LLM scoring API call
-            // The JSON response schema would look like:
-            // { "totalScore": 85, "coverageScore": 90, "readabilityGrade": "8-10", "suggestions": ["Include mention of 'MarketMuse strategy'", "..."] }
-            // The current calculateContentScore function provides the front-end simulation.
+        // --- Demo AI Draft Generation Function (Simulates Scalenut Cruise Mode) ---
+        async function generateAIDraft() {
+            const keywordInput = document.getElementById('keyword-input');
+            const keyword = keywordInput.value.trim();
+            const draftButton = document.getElementById('draft-button');
+            const editor = document.getElementById('content-editor');
+
+            if (!targetBrief.isBriefGenerated) {
+                // Show a custom message box instead of alert()
+                editor.innerHTML = `
+                    <h1 style="color: #ef4444;">Drafting Error</h1>
+                    <p>Please generate the **Content Brief** first using the keyword **"${keyword}"** before attempting to generate the AI Draft.</p>
+                `;
+                return;
+            }
+
+            draftButton.disabled = true;
+            draftButton.textContent = "AI Drafting Content...";
+            editor.classList.add('opacity-50');
+            
+            // Simulate AI generation time
+            await new Promise(resolve => setTimeout(resolve, 2500)); 
+
+            // Static, high-quality draft following the brief
+            const aiDraft = `
+                <h1>The Ultimate Content Forge: Merging the Power of NeuronWriter, Frase, MarketMuse, Scalenut, and Surfer SEO for Peak Performance</h1>
+                <p>The quest for peak search engine rankings has splintered the content creation workflow into fragments. Marketers rely on one tool for <strong>Keyword clustering</strong>, another for <strong>content brief generation</strong>, and yet another for <strong>Real-time scoring</strong>. The Ultimate Content Forge, born from the combined strengths of the top five <strong>AI writing assistant</strong> platforms, offers a singular, seamless environment. This <strong>standalone tool</strong> ensures every article achieves deep <strong>Topical authority</strong> and is primed for high-conversion performance through comprehensive <strong>on-page optimization</strong>.</p>
+                
+                <h2>1. Strategy & Discovery: Building Topical Authority (MarketMuse & Scalenut Approach)</h2>
+                <p>Before any drafting begins, MarketMuse and Scalenut taught us the value of strategic <strong>Semantic SEO</strong>. Instead of chasing single keywords, we focus on covering entire topics—<strong>keyword clustering</strong> is essential. Our strategy engine analyzes competition to identify not just keywords, but the core entities and questions that establish your site as an expert, ensuring your content is authoritative and comprehensive.</p>
+                
+                <h2>2. The Briefing Engine: Automating Research and Outlining (Frase & Surfer Approach)</h2>
+                <p>The most time-consuming step is manually dissecting the SERP. Frase and Surfer streamlined this with automated <strong>content brief generation</strong>. The Forge instantly produces a detailed plan: suggested word count (e.g., 2,200 words), required H2 structure, and the exact <strong>Semantic SEO</strong> terms needed, turning hours of competitor research into minutes. This ensures the structure is optimized before a single word is written.</p>
+                
+                <h2>3. Real-Time Optimization: Live Scoring and Entity Coverage (NeuronWriter & Surfer Approach)</h2>
+                <p>The core feedback loop comes from <strong>Real-time scoring</strong>. Similar to NeuronWriter and Surfer, our editor provides a dynamic 0-100 score that reflects your content's alignment with the brief. It instantly highlights gaps in <strong>on-page optimization</strong> and monitors the usage of critical entity terms, allowing writers to adjust their focus and achieve the target <strong>Topical authority</strong> score before publishing.</p>
+                
+                <h2>4. AI-Powered Drafting: The "Cruise Mode" Advantage (Scalenut Approach)</h2>
+                <p>Scalenut's "Cruise Mode" changed drafting forever. The Forge implements a similar function: with one click, the <strong>AI writing assistant</strong> generates a structured, high-relevance draft that follows the brief's outline and incorporates many required semantic terms. This feature drastically cuts down on the time spent facing a blank page, providing a strong starting point for the final <strong>on-page optimization</strong> pass.</p>
+
+                <h2>5. Comparison Table: Feature Matrix of the 5 Core Philosophies</h2>
+                <table>
+                    <thead>
+                        <tr><th>Feature</th><th>Core Tool Philosophy</th><th>Implementation in The Forge</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Strategic Topical Maps</td><td>MarketMuse / Scalenut</td><td>Keyword Clustering & Entity Focus</td></tr>
+                        <tr><td>SERP-Driven Briefs</td><td>Frase / Surfer SEO</td><td>Automated Outline Generation</td></tr>
+                        <tr><td>Real-time Content Score</td><td>Surfer SEO / NeuronWriter</td><td>Dynamic 0-100 Score Dial</td></tr>
+                        <tr><td>AI Long-Form Generation</td><td>Scalenut / NeuronWriter</td><td>"Cruise Mode" Draft Button</td></tr>
+                        <tr><td>Ease of Use / Budget</td><td>NeuronWriter</td><td>Single, Intuitive Interface</td></tr>
+                    </tbody>
+                </table>
+                
+                <h2>6. Conclusion: The Future of Content Workflow is Unified</h2>
+                <p>By bringing together the best of breed—MarketMuse's strategy, Frase's briefing, Surfer's scoring, Scalenut's drafting, and NeuronWriter's efficiency—The Ultimate Content Forge eliminates workflow bottlenecks. It provides a truly standalone, strategic, and optimized solution for content creators aiming for the highest organic visibility and <strong>Topical authority</strong>.</p>
+            `;
+
+            editor.innerHTML = aiDraft;
+            editor.classList.remove('opacity-50');
+            draftButton.disabled = false;
+            draftButton.textContent = "AI Draft Complete";
+            
+            // Trigger score calculation and saving for the new content
+            handleContentUpdate(); 
         }
     </script>
 
     <script>
         // Start Firebase Initialization
-        // Must be in its own script block to call the function defined in the module script
     </script>
 </body>
 </html>
