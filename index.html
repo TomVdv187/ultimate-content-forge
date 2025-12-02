@@ -14,6 +14,7 @@
             border: 1px solid #cbd5e1; /* border-slate-300 */
             padding: 1.5rem;
             line-height: 1.75;
+            font-size: 1rem;
             /* Deeper shadow for professional pop */
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1); 
             transition: box-shadow 0.3s;
@@ -50,16 +51,18 @@
             border-collapse: collapse;
             margin-top: 1rem;
             font-size: 0.875rem; /* text-sm */
+            border-radius: 0.5rem;
+            overflow: hidden;
         }
         #brief-text th, #brief-text td {
             border: 1px solid #e2e8f0;
-            padding: 0.5rem;
+            padding: 0.75rem;
             text-align: left;
         }
         #brief-text th {
-            background-color: #f8fafc;
-            font-weight: 600;
-            color: #475569;
+            background-color: #eef2ff; /* Indigo 50 */
+            font-weight: 700;
+            color: #4338ca; /* Indigo 700 */
         }
     </style>
     <!-- Firebase Imports -->
@@ -182,8 +185,8 @@
 
         <div class="bg-white p-8 rounded-2xl shadow-2xl space-y-8 border border-gray-200">
 
-            <!-- Strategy & Action Panel -->
-            <div class="flex flex-col gap-4 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+            <!-- Strategy & Action Panel (Step 1) -->
+            <div class="flex flex-col gap-4 bg-indigo-50 p-4 rounded-xl border border-indigo-200">
                 <div class="flex-grow w-full">
                     <label for="keyword-input" class="block text-sm font-semibold text-indigo-700 mb-1">Step 1: Define Target Keyword (Strategy)</label>
                     <input type="text" id="keyword-input" class="w-full border-gray-300 rounded-lg shadow-inner focus:border-indigo-500 focus:ring-indigo-500 p-3 text-lg" placeholder="Enter your primary focus keyword (e.g., 'Best SEO Content Tools 2025')">
@@ -197,22 +200,28 @@
                     </button>
                 </div>
             </div>
+            
+            <!-- Content Brief Output (Step 2 - Full Width) -->
+            <div id="brief-output" class="bg-indigo-50 border border-indigo-200 p-6 rounded-xl shadow-inner hidden">
+                <h3 class="text-xl font-bold text-indigo-800 mb-4 border-b border-indigo-300 pb-2">Step 2: Content Strategy & Brief (MarketMuse/Frase)</h3>
+                <div id="brief-text" class="text-sm text-gray-700 leading-relaxed"></div>
+            </div>
 
             <!-- Main Workspace: Editor and Score Panel -->
             <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
                 <!-- Content Editor (3/4 width on desktop) -->
                 <div class="lg:col-span-3">
-                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Drafting Workspace</h2>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">Step 3: Drafting Workspace</h2>
                     <div id="content-editor"
                          contenteditable="true"
                          class="content-editor bg-white focus:ring-2 focus:ring-indigo-500 rounded-xl transition duration-150"
                          oninput="handleContentUpdate()">
                          <!-- Placeholder content - use H1, H2, and P for structure -->
                          <h1>Ultimate Content Strategy: Merging NeuronWriter, Surfer, and MarketMuse</h1>
-                         <p>The modern content landscape requires tools that go beyond simple keyword research. We need real-time feedback, deep topical analysis, and efficient AI drafting. By examining the core philosophies of tools like MarketMuse, Surfer SEO, and NeuronWriter, we can forge a strategy that ensures both high relevance and excellent on-page optimization. This is the definition of **Semantic SEO** in practice.</p>
+                         <p>The modern content landscape requires tools that go beyond simple keyword research. We need real-time feedback, deep topical analysis, and efficient AI drafting. By examining the core philosophies of tools like MarketMuse, Surfer SEO, and NeuronWriter, we can forge a strategy that ensures both high relevance and excellent on-page optimization. This is the definition of <strong>Semantic SEO</strong> in practice.</p>
                          <h2>Why Fragmented Tools Fail Modern SEO</h2>
-                         <p>Too many marketers jump between an **AI writing assistant** for generation and a separate **on-page optimization** tool for scoring. This slows the workflow and rarely leads to peak **Topical authority**. We need a single system that handles **content brief generation** based on deep **SERP analysis**.</p>
+                         <p>Too many marketers jump between an <strong>AI writing assistant</strong> for generation and a separate <strong>on-page optimization</strong> tool for scoring. This slows the workflow and rarely leads to peak <strong>Topical authority</strong>. We need a single system that handles <strong>content brief generation</strong> based on deep <strong>SERP analysis</strong>.</p>
                     </div>
                     <p class="mt-3 text-sm text-gray-500 flex justify-between">
                         <span>Word Count: <span id="word-count" class="font-medium text-gray-700">0</span></span>
@@ -222,7 +231,7 @@
 
                 <!-- Optimization Score Panel (1/4 width on desktop) -->
                 <div class="lg:col-span-1 bg-gray-50 border border-indigo-100 p-5 rounded-2xl shadow-lg sticky top-8 h-fit">
-                    <h2 class="text-xl font-bold text-center text-indigo-800 mb-5">Content Score (NeuronWriter/Surfer)</h2>
+                    <h2 class="text-xl font-bold text-center text-indigo-800 mb-5">Step 4: Live Content Score (Optimization)</h2>
 
                     <div class="score-dial-container mx-auto mb-8">
                         <div id="content-score-dial" class="score-dial" style="background-color: #fca5a5;">
@@ -249,11 +258,6 @@
                                 <li class="text-gray-500">AI writing assistant (0/4)</li>
                                 <li class="text-gray-500">Content brief generation (0/2)</li>
                             </ul>
-                        </div>
-
-                        <div id="brief-output" class="mt-6 pt-4 border-t border-gray-300 hidden">
-                            <h3 class="text-lg font-bold text-gray-800 mb-2">Content Brief Outline</h3>
-                            <div id="brief-text" class="text-sm text-gray-700 leading-relaxed"></div>
                         </div>
                     </div>
                 </div>
@@ -442,7 +446,7 @@
             draftButton.disabled = true;
             briefButton.textContent = "Simulating SERP Analysis & Briefing...";
             document.getElementById('brief-output').classList.remove('hidden');
-            document.getElementById('brief-text').innerHTML = '<p class="text-sm text-indigo-500 animate-pulse">Running competitive and topical analysis...</p>';
+            document.getElementById('brief-text').innerHTML = '<p class="text-lg text-indigo-500 font-semibold animate-pulse">Running competitive and topical analysis...</p>';
 
             // --- Static Demo Brief Logic ---
             const demoBriefText = `
@@ -498,6 +502,7 @@ The simulated analysis suggests the following entity terms are essential for ach
             let processedLines = [];
             let inTable = false;
             let tableHtml = '';
+            let headerRemoved = false;
 
             for (let i = 0; i < lines.length; i++) {
                 const line = lines[i].trim();
@@ -506,14 +511,16 @@ The simulated analysis suggests the following entity terms are essential for ach
                     // Start of table structure (Header row and separator line found)
                     inTable = true;
                     // Find the header row (i.e., the line before this separator)
-                    const headerLine = lines[i - 1].trim();
-                    const headers = headerLine.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
-                    
-                    tableHtml = `<table><thead><tr>${headers}</tr></thead><tbody>`;
-                    
-                    // Skip the current line (separator) and the previous line (header)
-                    lines[i - 1] = ''; 
-                    lines[i] = '';
+                    if (i > 0) {
+                        const headerLine = lines[i - 1].trim();
+                        const headers = headerLine.split('|').filter(h => h.trim()).map(h => `<th>${h.trim()}</th>`).join('');
+                        tableHtml = `<table><thead><tr>${headers}</tr></thead><tbody>`;
+                        
+                        // Mark lines for removal
+                        lines[i - 1] = ''; 
+                        lines[i] = '';
+                        headerRemoved = true;
+                    }
 
                 } else if (line.startsWith('|') && inTable) {
                     // Table row
@@ -575,11 +582,14 @@ The simulated analysis suggests the following entity terms are essential for ach
             const editor = document.getElementById('content-editor');
 
             if (!targetBrief.isBriefGenerated) {
-                // Show a custom message box instead of alert()
-                editor.innerHTML = `
-                    <h1 style="color: #ef4444;">Drafting Error</h1>
-                    <p>Please generate the **Content Brief** first using the keyword **"${keyword}"** before attempting to generate the AI Draft.</p>
+                 // Use custom modal styling for the error message
+                const errorHtml = `
+                    <div style="padding: 20px; background: #fee2e2; border: 1px solid #f87171; border-radius: 8px;">
+                        <h1 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 10px;">Drafting Error</h1>
+                        <p style="color: #b91c1c;">Please complete **Step 1: Generate Brief** first using the keyword **"${keyword}"** before attempting to generate the AI Draft.</p>
+                    </div>
                 `;
+                editor.innerHTML = errorHtml + editor.innerHTML; // Prepend error message
                 return;
             }
 
